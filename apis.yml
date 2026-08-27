@@ -1,23 +1,480 @@
 aid: woodpecker-ci
 name: Woodpecker CI
-description: 'Woodpecker CI is a company surfaced via the API Evangelist harvest backlog (source: self-hosted-agent-stack)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Woodpecker CI is a free, open-source (Apache-2.0) continuous integration
+  and delivery engine, forked from Drone and maintained by a community organization
+  on GitHub. It is self-hosted: an operator runs a Woodpecker server plus one or more
+  agents (Docker, Kubernetes, or local backends) against a Git forge — GitHub, GitLab,
+  Gitea, Forgejo, or Bitbucket. Pipelines are declared in `.woodpecker/` YAML workflow
+  files validated by a published JSON Schema, and every server exposes a documented
+  Swagger 2.0 REST API under /api covering repositories, pipelines, secrets, registries,
+  crons, agents, forges, orgs and users, plus Server-Sent Event streams for pipeline
+  events and step logs. Agents talk to the server over a published gRPC/protobuf contract.
+  A first-party Go client library (woodpecker-go), a woodpecker-cli command line tool,
+  DEB/RPM packages, container images and a Helm chart are all published by the project.'
 url: https://raw.githubusercontent.com/api-evangelist/woodpecker-ci/refs/heads/main/apis.yml
+image: https://woodpecker-ci.org/img/logo.svg
 x-type: company
 x-source: harvest:self-hosted-agent-stack
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-27'
 modified: '2026-08-27'
 tags:
 - Company
-apis: []
+- Continuous Integration
+- Continuous Delivery
+- DevOps
+- Developer Tools
+- Open Source
+- Pipelines
+- Self-Hosted
+- Build Automation
+- Containers
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: woodpecker-ci:woodpecker-ci-agents-api
+  name: Woodpecker CI Agents API
+  description: The Agents API from Woodpecker CI — 5 operation(s) for agents.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-agents-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-badges-api
+  name: Woodpecker CI Badges API
+  description: The Badges API from Woodpecker CI — 2 operation(s) for badges.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Badges
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-badges-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-events-api
+  name: Woodpecker CI Events API
+  description: The Events API from Woodpecker CI — 1 operation(s) for events.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-events-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-forges-api
+  name: Woodpecker CI Forges API
+  description: The Forges API from Woodpecker CI — 2 operation(s) for forges.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Forges
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-forges-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-organization-api
+  name: Woodpecker CI Organization API
+  description: The Organization API from Woodpecker CI — 1 operation(s) for organization.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Organization
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-organization-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-organization-permissions-api
+  name: Woodpecker CI Organization permissions API
+  description: >-
+    The Organization permissions API from Woodpecker CI — 1 operation(s) for organization permissions.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Organization permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-organization-permissions-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-organization-registries-api
+  name: Woodpecker CI Organization registries API
+  description: >-
+    The Organization registries API from Woodpecker CI — 2 operation(s) for organization registries.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Organization registries
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-organization-registries-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-organization-secrets-api
+  name: Woodpecker CI Organization secrets API
+  description: >-
+    The Organization secrets API from Woodpecker CI — 2 operation(s) for organization secrets.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Organization secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-organization-secrets-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-orgs-api
+  name: Woodpecker CI Orgs API
+  description: The Orgs API from Woodpecker CI — 3 operation(s) for orgs.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Orgs
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-orgs-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-pipeline-logs-api
+  name: Woodpecker CI Pipeline logs API
+  description: The Pipeline logs API from Woodpecker CI — 4 operation(s) for pipeline logs.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Pipeline logs
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-pipeline-logs-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-pipeline-queues-api
+  name: Woodpecker CI Pipeline queues API
+  description: The Pipeline queues API from Woodpecker CI — 5 operation(s) for pipeline queues.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Pipeline queues
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-pipeline-queues-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-pipelines-api
+  name: Woodpecker CI Pipelines API
+  description: The Pipelines API from Woodpecker CI — 7 operation(s) for pipelines.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Pipelines
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-pipelines-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-process-profiling-and-debugging-api
+  name: Woodpecker CI Process profiling and debugging API
+  description: >-
+    The Process profiling and debugging API from Woodpecker CI — 9 operation(s) for process profiling
+    and debugging.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Process profiling and debugging
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-process-profiling-and-debugging-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-registries-api
+  name: Woodpecker CI Registries API
+  description: The Registries API from Woodpecker CI — 2 operation(s) for registries.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Registries
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-registries-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-repositories-api
+  name: Woodpecker CI Repositories API
+  description: The Repositories API from Woodpecker CI — 10 operation(s) for repositories.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Repositories
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-repositories-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-repository-cron-jobs-api
+  name: Woodpecker CI Repository cron jobs API
+  description: >-
+    The Repository cron jobs API from Woodpecker CI — 2 operation(s) for repository cron jobs.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Repository cron jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-repository-cron-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-repository-registries-api
+  name: Woodpecker CI Repository registries API
+  description: >-
+    The Repository registries API from Woodpecker CI — 2 operation(s) for repository registries.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Repository registries
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-repository-registries-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-repository-secrets-api
+  name: Woodpecker CI Repository secrets API
+  description: The Repository secrets API from Woodpecker CI — 2 operation(s) for repository secrets.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Repository secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-repository-secrets-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-secrets-api
+  name: Woodpecker CI Secrets API
+  description: The Secrets API from Woodpecker CI — 2 operation(s) for secrets.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-secrets-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-system-api
+  name: Woodpecker CI System API
+  description: The System API from Woodpecker CI — 5 operation(s) for system.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - System
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-system-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-user-api
+  name: Woodpecker CI User API
+  description: The User API from Woodpecker CI — 4 operation(s) for user.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - User
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-user-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
+- aid: woodpecker-ci:woodpecker-ci-users-api
+  name: Woodpecker CI Users API
+  description: The Users API from Woodpecker CI — 2 operation(s) for users.
+  humanURL: https://woodpecker-ci.org/api
+  baseURL: https://ci.woodpecker-ci.org/api
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/woodpecker-ci-users-api-openapi.yml
+  - type: Documentation
+    url: https://woodpecker-ci.org/docs/intro
+  - type: APIReference
+    url: https://woodpecker-ci.org/api
+  - type: Console
+    url: https://ci.woodpecker-ci.org/swagger/index.html
 common:
+- type: Overlay
+  url: overlays/woodpecker-ci-server-swagger-overlay.yaml
 - type: Website
   url: https://woodpecker-ci.org/
+- type: DeveloperPortal
+  url: https://woodpecker-ci.org/docs/intro
+- type: Documentation
+  url: https://woodpecker-ci.org/docs/intro
+- type: APIReference
+  url: https://woodpecker-ci.org/api
+- type: GettingStarted
+  url: https://woodpecker-ci.org/docs/usage/intro
+- type: Support
+  url: https://github.com/woodpecker-ci/.github/blob/main/SUPPORT.md
+- type: Blog
+  url: https://woodpecker-ci.org/blog
+- type: GitHubOrganization
+  url: https://github.com/woodpecker-ci
+- type: ChangeLog
+  url: changelog/woodpecker-ci-changelog.yml
+- type: Deprecation
+  url: https://woodpecker-ci.org/docs/development/deprecations
+- type: Lifecycle
+  url: lifecycle/woodpecker-ci-lifecycle.yml
+- type: Security
+  url: https://github.com/woodpecker-ci/.github/blob/main/SECURITY.md
+- type: VulnerabilityDisclosure
+  url: security/woodpecker-ci-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/woodpecker-ci-domain-security.yml
+- type: Authentication
+  url: authentication/woodpecker-ci-authentication.yml
+- type: Conventions
+  url: conventions/woodpecker-ci-conventions.yml
+- type: ErrorCatalog
+  url: errors/woodpecker-ci-problem-types.yml
+- type: Conformance
+  url: conformance/woodpecker-ci-conformance.yml
+- type: DataModel
+  url: data-model/woodpecker-ci-data-model.yml
+- type: Packages
+  url: packages/woodpecker-ci-packages.yml
+- type: SDKs
+  url: packages/woodpecker-ci-packages.yml
+- type: CLI
+  url: cli/woodpecker-ci-cli.yml
+- type: Sandbox
+  url: sandbox/woodpecker-ci-sandbox.yml
+- type: Plans
+  url: plans/woodpecker-ci-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/woodpecker-ci-rate-limits.yml
+- type: Webhooks
+  url: asyncapi/woodpecker-ci-events.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: ToolCrosswalk
+  url: mcp/woodpecker-ci-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/woodpecker-ci-llms.txt
+- type: JSONSchema
+  url: json-schema/woodpecker-ci-pipeline-schema.json
+- type: Protobuf
+  url: grpc/woodpecker-ci-rpc.proto
+x-enrichment:
+  date: '2026-08-27'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v1
+x-coverage:
+  state: covered
+  reason: null
+  detail: >-
+    Woodpecker CI publishes a real machine-readable contract: a Swagger 2.0 document with
+    118 operations served at https://ci.woodpecker-ci.org/swagger/doc.json and rendered at
+    https://woodpecker-ci.org/api, plus a draft-07 JSON Schema for pipeline files and a
+    proto3 gRPC contract. Nothing was gated, unreadable or blocked.
+  evidence:
+  - url: https://ci.woodpecker-ci.org/swagger/doc.json
+    status: 200
+  - url: https://woodpecker-ci.org/api
+    status: 200
+  checked: '2026-08-27'
