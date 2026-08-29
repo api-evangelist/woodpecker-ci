@@ -12,6 +12,17 @@ description: 'Woodpecker CI is a free, open-source (Apache-2.0) continuous integ
   A first-party Go client library (woodpecker-go), a woodpecker-cli command line tool,
   DEB/RPM packages, container images and a Helm chart are all published by the project.'
 url: https://raw.githubusercontent.com/api-evangelist/woodpecker-ci/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://woodpecker-ci.org/img/logo.svg
 x-type: company
 x-source: harvest:self-hosted-agent-stack
