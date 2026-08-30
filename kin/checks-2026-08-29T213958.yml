@@ -1,30 +1,52 @@
 ---
 kin_checks:
   slug: woodpecker-ci
-  schema_version: 0.15.1
-  scored_at: '2026-08-27'
-  run_ts: 2026-08-27T140727
+  schema_version: 0.16.0
+  scored_at: '2026-08-29'
+  run_ts: 2026-08-29T213958
   note: Actionable checks only (missed + partial). earned/na are every other check
-    in rubric/scoring-0.15.1.yml; counts below let you verify that.
+    in rubric/scoring-0.16.0.yml; counts below let you verify that.
   counts:
     total: 130
-    earned: 35
-    partial: 4
-    missed: 49
-    na: 42
+    earned: 42
+    partial: 7
+    missed: 57
+    na: 24
   checks:
-  - id: multiple_apis
-    status: missed
   - id: well_known_published
     status: missed
   - id: llms_txt_published
     status: missed
   - id: apis_json_self_hosted
     status: missed
+  - id: openapi_3_2
+    status: missed
+    detail: 0 of 22 openapi documents pass
+  - id: openapi_3_1
+    status: missed
+    detail: 0 of 22 openapi documents pass
+  - id: openapi_3_0
+    status: missed
+    detail: 0 of 22 openapi documents pass
   - id: servers_resolvable
     status: missed
+  - id: operations_operation_ids
+    status: missed
+    detail: 0 of 22 openapi documents pass
+  - id: error_responses_documented
+    status: missed
+    detail: 0 of 22 openapi documents pass
   - id: examples_present
     status: missed
+  - id: security_schemes_defined
+    status: missed
+    detail: 0 of 22 openapi documents pass
+  - id: security_applied
+    status: missed
+    detail: 0 of 22 openapi documents pass
+  - id: webhooks_or_callbacks
+    status: missed
+    detail: 0 of 22 openapi documents pass
   - id: json_schema_present
     status: missed
   - id: json_schema_per_resource
@@ -46,6 +68,8 @@ kin_checks:
   - id: balanced_severities
     status: missed
   - id: vocabulary_published
+    status: missed
+  - id: overlay_published
     status: missed
   - id: status_page_present
     status: missed
@@ -111,6 +135,18 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
+  - id: operations_description_coverage
+    status: partial
+    earned: 0.82
+    detail: 3 of 22 openapi documents pass
+  - id: components_reuse
+    status: partial
+    earned: 0.68
+    detail: 5 of 22 openapi documents pass
+  - id: github_org_present
+    status: partial
+    earned: 1.0
+    detail: pointer liveness 0.5
   - id: mcp_server
     status: partial
     earned: 4.8
