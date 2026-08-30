@@ -1,0 +1,205 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Organization registries API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Organization registries
+paths:
+  /orgs/{org_id}/registries:
+    get:
+      tags:
+      - Organization registries
+      summary: List organization registries
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registry'
+    post:
+      tags:
+      - Organization registries
+      summary: Create an organization registry
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the new registry
+        required: true
+  /orgs/{org_id}/registries/{registry}:
+    get:
+      tags:
+      - Organization registries
+      summary: Get a organization registry by address
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: the registry's address
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+    delete:
+      tags:
+      - Organization registries
+      summary: Delete an organization registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: the registry's name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+    patch:
+      tags:
+      - Organization registries
+      summary: Update an organization registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: the registry's name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the update registry data
+        required: true
+components:
+  schemas:
+    Registry:
+      type: object
+      properties:
+        address:
+          type: string
+        id:
+          type: integer
+        org_id:
+          type: integer
+        password:
+          type: string
+        readonly:
+          type: boolean
+        repo_id:
+          type: integer
+        username:
+          type: string

@@ -1,0 +1,28 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/
+probed:
+- url: https://woodpecker-ci.org/pricing
+  status: 404
+  checked: '2026-08-27'
+- url: https://woodpecker-ci.org/about
+  status: 200
+  checked: '2026-08-27'
+plan_count: 0
+plans: []
+model: free-open-source
+license: Apache-2.0
+note: >-
+  Woodpecker CI publishes no plans, no pricing page and no paid tier. It is free and
+  open-source software under Apache-2.0 that the user installs and runs themselves; the
+  project's own About page states it "will stay free and open source forever", in explicit
+  contrast to Drone, from which it was forked after Drone relicensed away from Apache-2.0
+  after 0.8. There is no hosted offering, no account, no signup and no billing surface, so
+  plan_count is 0 as a fact about the product rather than a gap in this profile. The only
+  money surface is community funding via the GitHub FUNDING file on the woodpecker-ci/.github
+  repository.
+cost_drivers:
+  note: >-
+    Cost is entirely the operator's infrastructure — the server, the database, and the
+    number and size of agents. The autoscaler (https://github.com/woodpecker-ci/autoscaler)
+    exists specifically to scale agent capacity to load.

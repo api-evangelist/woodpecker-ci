@@ -1,0 +1,126 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI System API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: System
+paths:
+  /healthz:
+    get:
+      description: If everything is fine, just a 204 will be returned, a 500 signals server state is unhealthy.
+      tags:
+      - System
+      summary: Health information
+      responses:
+        '204':
+          description: No Content
+        '500':
+          description: Internal Server Error
+  /hook:
+    post:
+      tags:
+      - System
+      summary: Incoming webhook from forge
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        description: the webhook payload; forge is automatically detected
+        required: true
+  /log-level:
+    get:
+      description: Endpoint returns the current logging level. Requires admin rights.
+      tags:
+      - System
+      summary: Current log level
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  log-level:
+                    type: string
+    post:
+      description: Endpoint sets the current logging level. Requires admin rights.
+      tags:
+      - System
+      summary: Set log level
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  log-level:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                log-level:
+                  type: string
+        description: the new log level, one of <debug,trace,info,warn,error,fatal,panic,disabled>
+        required: true
+  /signature/public-key:
+    get:
+      tags:
+      - System
+      summary: Get server's signature public key
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /version:
+    get:
+      description: Endpoint returns the server version and build information.
+      tags:
+      - System
+      summary: Get version
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  version:
+                    type: string

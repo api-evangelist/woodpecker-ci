@@ -1,0 +1,216 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Pipeline logs API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Pipeline logs
+paths:
+  /repos/{repo_id}/logs/{pipeline_number}:
+    delete:
+      tags:
+      - Pipeline logs
+      summary: Deletes all logs of a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No Content
+  /repos/{repo_id}/logs/{pipeline_number}/{step_id}:
+    get:
+      tags:
+      - Pipeline logs
+      summary: Get logs for a pipeline step
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the step id
+        name: step_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntry'
+    delete:
+      tags:
+      - Pipeline logs
+      summary: Delete step logs of a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the step id
+        name: step_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No Content
+  /repos/{repo_id}/logs/{pipeline_number}/{step_id}/download:
+    get:
+      tags:
+      - Pipeline logs
+      summary: Download logs for a pipeline step
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the step id
+        name: step_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+  /stream/logs/{repo_id}/{pipeline}/{step_id}:
+    get:
+      tags:
+      - Pipeline logs
+      summary: Stream logs of a pipeline step
+      parameters:
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the step id
+        name: step_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    LogEntry:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: integer
+        id:
+          type: integer
+        line:
+          type: integer
+        step_id:
+          type: integer
+        time:
+          type: integer
+        type:
+          $ref: '#/components/schemas/LogEntryType'
+    LogEntryType:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      x-enum-varnames:
+      - LogEntryStdout
+      - LogEntryStderr
+      - LogEntryExitCode
+      - LogEntryMetadata
+      - LogEntryProgress

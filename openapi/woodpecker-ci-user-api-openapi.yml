@@ -1,0 +1,642 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI User API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: User
+paths:
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get the currently authenticated user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /user/feed:
+    get:
+      description: The feed lists the most recent pipeline for the currently authenticated user.
+      tags:
+      - User
+      summary: Get the currently authenticated users pipeline feed
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feed'
+  /user/repos:
+    get:
+      description: Retrieve the currently authenticated User's Repository list
+      tags:
+      - User
+      summary: Get user's repositories
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: query all repos, including inactive ones
+        name: all
+        in: query
+        schema:
+          type: boolean
+      - description: filter repos by name
+        name: name
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RepoLastPipeline'
+  /user/token:
+    post:
+      tags:
+      - User
+      summary: Return the token of the current user as string
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+    delete:
+      description: Reset's the current personal access token of the user and returns a new one.
+      tags:
+      - User
+      summary: Reset a token
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
+    RepoLastPipeline:
+      type: object
+      properties:
+        active:
+          type: boolean
+        allow_deploy:
+          type: boolean
+        allow_pr:
+          type: boolean
+        approval_allowed_users:
+          type: array
+          items:
+            type: string
+        avatar_url:
+          type: string
+        cancel_previous_pipeline_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        config_extension_endpoint:
+          type: string
+        config_extension_exclusive:
+          type: boolean
+        config_extension_netrc:
+          type: boolean
+        config_file:
+          type: string
+        default_branch:
+          type: string
+        forge_id:
+          type: integer
+        forge_remote_id:
+          description: ForgeRemoteID is the unique identifier for the repository on the forge.
+          type: string
+        forge_url:
+          type: string
+        full_name:
+          type: string
+        has_forge_name_conflict:
+          description: HasForgeNameConflict is true if forge returned a repo with same name but different forge remote id
+          type: boolean
+        has_no_forge_repo:
+          description: HasNoForgeRepo is true if repo only exist in the woodpecker store and not at the forge anymore
+          type: boolean
+        id:
+          type: integer
+        last_pipeline:
+          $ref: '#/components/schemas/Pipeline'
+        name:
+          type: string
+        netrc_trusted:
+          type: array
+          items:
+            type: string
+        org_id:
+          type: integer
+        owner:
+          type: string
+        pr_enabled:
+          type: boolean
+        private:
+          type: boolean
+        registry_extension_endpoint:
+          type: string
+        registry_extension_netrc:
+          type: boolean
+        require_approval:
+          $ref: '#/components/schemas/model.ApprovalMode'
+        secret_extension_endpoint:
+          type: string
+        secret_extension_netrc:
+          type: boolean
+        timeout:
+          type: integer
+        trusted:
+          $ref: '#/components/schemas/model.TrustedConfiguration'
+        visibility:
+          $ref: '#/components/schemas/RepoVisibility'
+    CancelInfo:
+      type: object
+      properties:
+        canceled_by_step:
+          type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    Pipeline:
+      type: object
+      properties:
+        author:
+          description: 'TODO: only // The user sending the webhook data or triggering the pipeline event'
+          type: string
+        author_avatar:
+          description: 'TODO: only & rename to AuthorAvatar // Avatar URL of the author of the commit'
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        cancel_info:
+          $ref: '#/components/schemas/CancelInfo'
+        changed_files:
+          type: array
+          items:
+            type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        cron:
+          description: name of the cron job
+          type: string
+        deploy_task:
+          type: string
+        deploy_to:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/errors.PipelineError'
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        event_reason:
+          type: array
+          items:
+            type: string
+        finished:
+          type: integer
+        forge_url:
+          type: string
+        from_fork:
+          type: boolean
+        id:
+          type: integer
+        is_prerelease:
+          description: deprecated, use release.is_prerelease instead
+          type: boolean
+        message:
+          type: string
+        number:
+          type: integer
+        parent:
+          type: integer
+        pr_draft:
+          type: boolean
+        pr_labels:
+          type: array
+          items:
+            type: string
+        pr_milestone:
+          type: string
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        rerun_count:
+          type: integer
+        reviewed:
+          type: integer
+        reviewed_by:
+          type: string
+        sender:
+          description: uses reported user for webhooks and name of cron for cron pipelines
+          type: string
+        started:
+          type: integer
+        status:
+          $ref: '#/components/schemas/StatusValue'
+        tag_title:
+          type: string
+        timestamp:
+          type: integer
+        title:
+          description: // Deprecated
+          type: string
+        updated:
+          type: integer
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+        version:
+          type: string
+        workflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.Workflow'
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    User:
+      type: object
+      properties:
+        admin:
+          description: 'Admin indicates the user is a system administrator.
+
+
+            NOTE: If the username is part of the WOODPECKER_ADMIN
+
+            environment variable, this value will be set to true on login.'
+          type: boolean
+        admin_env:
+          type: boolean
+        avatar_url:
+          description: the avatar url for this user.
+          type: string
+        email:
+          description: 'Email is the email address for this user.
+
+
+            required: true'
+          type: string
+        forge_id:
+          type: integer
+        forge_remote_id:
+          type: string
+        id:
+          description: 'the id for this user.
+
+
+            required: true'
+          type: integer
+        login:
+          description: 'Login is the username for this user.
+
+
+            required: true'
+          type: string
+        org_id:
+          description: OrgID is the of the user as model.Org.
+          type: integer
+    RepoVisibility:
+      type: string
+      enum:
+      - public
+      - private
+      - internal
+      x-enum-varnames:
+      - VisibilityPublic
+      - VisibilityPrivate
+      - VisibilityInternal
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
+          type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    Feed:
+      type: object
+      properties:
+        author:
+          type: string
+        author_avatar:
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        finished:
+          type: integer
+        full_name:
+          type: string
+        id:
+          type: integer
+        message:
+          description: // Deprecated
+          type: string
+        number:
+          type: integer
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        repo_id:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        tag_title:
+          type: string
+        title:
+          type: string

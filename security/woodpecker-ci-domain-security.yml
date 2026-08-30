@@ -1,0 +1,20 @@
+generated: '2026-08-27'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: woodpecker-ci.org
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 29 18:06:52 2026 GMT
+  hsts: false
+- host: ci.woodpecker-ci.org
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 14 06:12:17 2026 GMT
+  hsts: false
+domains:
+- domain: woodpecker-ci.org
+  dnssec: false
+  caa: []
+  spf: false
+  dmarc: false

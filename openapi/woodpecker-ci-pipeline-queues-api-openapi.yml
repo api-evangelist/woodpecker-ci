@@ -1,0 +1,315 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Pipeline queues API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Pipeline queues
+paths:
+  /pipelines:
+    get:
+      tags:
+      - Pipeline queues
+      summary: List pipelines in queue
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feed'
+  /queue/info:
+    get:
+      description: Returns pipeline queue information with agent details
+      tags:
+      - Pipeline queues
+      summary: Get pipeline queue information
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueInfo'
+  /queue/norunningpipelines:
+    get:
+      tags:
+      - Pipeline queues
+      summary: Block til pipeline queue has a running item
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '204':
+          description: No Content
+  /queue/pause:
+    post:
+      tags:
+      - Pipeline queues
+      summary: Pause the pipeline queue
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '204':
+          description: No Content
+  /queue/resume:
+    post:
+      tags:
+      - Pipeline queues
+      summary: Resume the pipeline queue
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    model.QueueTask:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        agent_name:
+          type: string
+        concurrency_group:
+          description: 'ConcurrencyGroup identifies tasks that are limited against each other.
+
+            It is empty when no concurrency limit applies.'
+          type: string
+        concurrency_limit:
+          description: 'ConcurrencyLimit is the maximum number of tasks sharing the same
+
+            ConcurrencyGroup that may run at once. A value <= 0 means unlimited.'
+          type: integer
+        created:
+          description: 'Created is the unix timestamp the task''s pipeline was created at. It
+
+            defines the queue ordering across pipelines.'
+          type: integer
+        dep_status:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatusValue'
+        dependencies:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        pipeline_number:
+          type: integer
+        repo_id:
+          type: integer
+        run_on:
+          type: array
+          items:
+            type: string
+    QueueInfo:
+      type: object
+      properties:
+        paused:
+          type: boolean
+        pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        running:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        stats:
+          type: object
+          properties:
+            pending_count:
+              type: integer
+            running_count:
+              type: integer
+            waiting_on_deps_count:
+              type: integer
+            worker_count:
+              type: integer
+        waiting_on_deps:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    Feed:
+      type: object
+      properties:
+        author:
+          type: string
+        author_avatar:
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        finished:
+          type: integer
+        full_name:
+          type: string
+        id:
+          type: integer
+        message:
+          description: // Deprecated
+          type: string
+        number:
+          type: integer
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        repo_id:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        tag_title:
+          type: string
+        title:
+          type: string

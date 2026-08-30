@@ -1,0 +1,52 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Badges API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Badges
+paths:
+  /badges/{repo_id}/cc.xml:
+    get:
+      description: 'CCMenu displays the pipeline status of projects on a CI server as an item in the Mac''s menu bar.
+
+        More details on how to install, you can find at http://ccmenu.org/
+
+        The response format adheres to CCTray v1 Specification, https://cctray.org/v1/'
+      tags:
+      - Badges
+      summary: Provide pipeline status information to the CCMenu tool
+      parameters:
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+  /badges/{repo_id}/status.svg:
+    get:
+      tags:
+      - Badges
+      summary: Get status of pipeline as SVG badge
+      parameters:
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK

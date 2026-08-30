@@ -1,0 +1,175 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Registries API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Registries
+paths:
+  /registries:
+    get:
+      tags:
+      - Registries
+      summary: List global registries
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registry'
+    post:
+      tags:
+      - Registries
+      summary: Create a global registry
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the registry object data
+        required: true
+  /registries/{registry}:
+    get:
+      tags:
+      - Registries
+      summary: Get a global registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the registry's name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+    delete:
+      tags:
+      - Registries
+      summary: Delete a global registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the registry's name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+    patch:
+      tags:
+      - Registries
+      summary: Update a global registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the registry's name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the registry's data
+        required: true
+components:
+  schemas:
+    Registry:
+      type: object
+      properties:
+        address:
+          type: string
+        id:
+          type: integer
+        org_id:
+          type: integer
+        password:
+          type: string
+        readonly:
+          type: boolean
+        repo_id:
+          type: integer
+        username:
+          type: string

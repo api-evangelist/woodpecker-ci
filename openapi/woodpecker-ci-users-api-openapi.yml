@@ -1,0 +1,226 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Users API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Users
+paths:
+  /users:
+    get:
+      description: Returns all registered, active users in the system. Requires admin rights.
+      tags:
+      - Users
+      summary: List users
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      description: Creates a new user account with the specified external login. Requires admin rights.
+      tags:
+      - Users
+      summary: Create a user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: the user's data
+        required: true
+  /users/{login}:
+    get:
+      description: Returns a user with the specified login name. Requires admin rights.
+      tags:
+      - Users
+      summary: Get a user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the user's login name
+        name: login
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: specify forge (else default will be used)
+        name: forge_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - description: specify user id at forge (else fallback to login)
+        name: forge_remote_id
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      description: Deletes the given user. Requires admin rights.
+      tags:
+      - Users
+      summary: Delete a user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the user's login name
+        name: login
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: specify forge (else default will be used)
+        name: forge_id
+        in: query
+        required: true
+        schema:
+          type: string
+      - description: specify user id at forge (else fallback to login)
+        name: forge_remote_id
+        in: query
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+    patch:
+      description: Changes the data of an existing user. Requires admin rights.
+      tags:
+      - Users
+      summary: Update a user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the user's login name
+        name: login
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: the user's data
+        required: true
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        admin:
+          description: 'Admin indicates the user is a system administrator.
+
+
+            NOTE: If the username is part of the WOODPECKER_ADMIN
+
+            environment variable, this value will be set to true on login.'
+          type: boolean
+        admin_env:
+          type: boolean
+        avatar_url:
+          description: the avatar url for this user.
+          type: string
+        email:
+          description: 'Email is the email address for this user.
+
+
+            required: true'
+          type: string
+        forge_id:
+          type: integer
+        forge_remote_id:
+          type: string
+        id:
+          description: 'the id for this user.
+
+
+            required: true'
+          type: integer
+        login:
+          description: 'Login is the username for this user.
+
+
+            required: true'
+          type: string
+        org_id:
+          description: OrgID is the of the user as model.Org.
+          type: integer

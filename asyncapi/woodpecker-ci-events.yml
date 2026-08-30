@@ -1,0 +1,94 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/woodpecker-ci-server-swagger.json, https://woodpecker-ci.org/docs/usage/project-settings, https://woodpecker-ci.org/docs/administration/configuration/forges/overview
+asyncapi_published: false
+asyncapi_note: >-
+  Woodpecker publishes NO AsyncAPI document. Probes for /asyncapi.yaml, /asyncapi.json and
+  an event catalog on woodpecker-ci.org and ci.woodpecker-ci.org all missed. None is
+  authored here — this file is a catalog of the event surface that the REST contract and
+  the docs actually declare, not a fabricated spec.
+summary: >-
+  Woodpecker's event surface runs in two directions and neither is a conventional outbound
+  webhook. INBOUND: activating a repository registers a webhook on the Git forge, and the
+  forge POSTs repository events to the Woodpecker server at /hook. OUTBOUND: the server
+  publishes Server-Sent Event streams for pipeline state changes and for live step logs,
+  which is what the web UI consumes and what an external agent would subscribe to.
+inbound_webhooks:
+- name: forge repository webhook
+  endpoint: POST /hook
+  summary: Incoming webhook from forge
+  direction: forge -> Woodpecker server
+  authentication: >-
+    Not user-authenticated. Verified against the webhook secret Woodpecker configured on
+    the forge when the repository was activated.
+  registration: >-
+    "Your Version-Control-System will notify Woodpecker about events via webhooks"
+    (https://woodpecker-ci.org/docs/usage/project-settings). The hook is created
+    automatically when a repository is activated, and POST /repos/{repo_id}/repair or
+    POST /repos/repair re-creates it if it is lost.
+  forges_supported: [GitHub, GitLab, Gitea, Forgejo, Bitbucket, Bitbucket Data Center]
+  payload_schema: >-
+    None published by Woodpecker — the body is whatever the forge sends, in each forge's
+    own format. There is no Woodpecker-defined inbound event schema to document.
+  source: 'openapi/woodpecker-ci-server-swagger.json paths./hook.post'
+event_types:
+  definition: WebhookEvent
+  source: 'openapi/woodpecker-ci-server-swagger.json definitions.WebhookEvent'
+  note: >-
+    The event vocabulary Woodpecker derives from a forge hook (or from an internal trigger)
+    and stores on Pipeline.event. Repository settings let an operator restrict which of
+    these actually start a pipeline.
+  values:
+  - push
+  - pull_request
+  - pull_request_closed
+  - pull_request_metadata
+  - tag
+  - release
+  - deployment
+  - cron
+  - manual
+outbound_streams:
+- name: pipeline events
+  endpoint: GET /stream/events
+  protocol: Server-Sent Events
+  transport_note: 'Declared in the spec as "With quic and http2 support".'
+  summary: Stream events like pipeline updates
+  payload_schema: >-
+    Not declared in the contract. The operation declares only a 200 with no response schema
+    and produces text/plain, so the frame body is undocumented. A consumer has to learn the
+    shape from the web UI source. This is the single biggest gap in the event surface.
+  tag: Events
+- name: step logs
+  endpoint: GET /stream/logs/{repo_id}/{pipeline}/{step_id}
+  protocol: Server-Sent Events
+  summary: Stream logs of a pipeline step
+  parameters:
+  - name: seconds
+    in: query
+    note: Present on the log-streaming operations.
+  payload_schema: LogEntry (definitions.LogEntry / definitions.LogEntryType in the Swagger document)
+  tag: Pipeline logs
+outbound_webhooks:
+  supported: false
+  note: >-
+    Woodpecker does not POST pipeline results to an operator-supplied URL. There is no
+    subscription resource, no delivery log and no retry policy, because there is no outbound
+    webhook feature. Notifying an external system is done from inside a pipeline with a
+    plugin (ntfy, Discord, Matrix, Microsoft Teams, Mastodon and others are listed at
+    https://woodpecker-ci.org/plugins), which is a pipeline step rather than a platform
+    event delivery.
+status_polling_alternatives:
+- endpoint: GET /badges/{repo_id}/status.svg
+  note: SVG status badge.
+- endpoint: GET /badges/{repo_id}/cc.xml
+  note: CCTray/CCMenu XML build-status feed — the standards-based polling alternative to a stream.
+- endpoint: GET /user/feed
+  note: Denormalized recent-pipeline feed for the authenticated user.
+probed:
+- url: https://woodpecker-ci.org/asyncapi.yaml
+  status: 404
+  checked: '2026-08-27'
+- url: https://woodpecker-ci.org/asyncapi.json
+  status: 404
+  checked: '2026-08-27'

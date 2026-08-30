@@ -1,0 +1,610 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Repositories API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Repositories
+paths:
+  /repos:
+    get:
+      description: Returns a list of all repositories. Requires admin rights.
+      tags:
+      - Repositories
+      summary: List all repositories on the server
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: only list active repos
+        name: active
+        in: query
+        schema:
+          type: boolean
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Repo'
+    post:
+      tags:
+      - Repositories
+      summary: Activate a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the id of a repository at the forge
+        name: forge_remote_id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+  /repos/lookup/{repo_full_name}:
+    get:
+      tags:
+      - Repositories
+      summary: Lookup a repository by full name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository full name / slug
+        name: repo_full_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+  /repos/repair:
+    post:
+      description: Executes a repair process on all repositories. Requires admin rights.
+      tags:
+      - Repositories
+      summary: Repair all repositories on the server
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '204':
+          description: No Content
+  /repos/{repo_id}:
+    get:
+      tags:
+      - Repositories
+      summary: Get a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+    delete:
+      tags:
+      - Repositories
+      summary: Delete a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+    patch:
+      tags:
+      - Repositories
+      summary: Update a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepoPatch'
+        description: the repository's information
+        required: true
+  /repos/{repo_id}/branches:
+    get:
+      tags:
+      - Repositories
+      summary: Get branches of a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /repos/{repo_id}/chown:
+    post:
+      tags:
+      - Repositories
+      summary: Change a repository's owner to the currently authenticated user
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repo'
+  /repos/{repo_id}/move:
+    post:
+      tags:
+      - Repositories
+      summary: Move a repository to a new owner
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the username to move the repository to
+        name: to
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+  /repos/{repo_id}/permissions:
+    get:
+      description: The repository permission, according to the used access token.
+      tags:
+      - Repositories
+      summary: Check current authenticated users access to the repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Perm'
+  /repos/{repo_id}/pull_requests:
+    get:
+      tags:
+      - Repositories
+      summary: List active pull requests of a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PullRequest'
+  /repos/{repo_id}/repair:
+    post:
+      tags:
+      - Repositories
+      summary: Repair a repository
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    model.TrustedConfigurationPatch:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    PullRequest:
+      type: object
+      properties:
+        index:
+          type: string
+        title:
+          type: string
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    RepoPatch:
+      type: object
+      properties:
+        allow_deploy:
+          type: boolean
+        allow_pr:
+          type: boolean
+        approval_allowed_users:
+          type: array
+          items:
+            type: string
+        cancel_previous_pipeline_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        config_extension_endpoint:
+          type: string
+        config_extension_exclusive:
+          type: boolean
+        config_extension_netrc:
+          type: boolean
+        config_file:
+          type: string
+        netrc_trusted:
+          type: array
+          items:
+            type: string
+        registry_extension_endpoint:
+          type: string
+        registry_extension_netrc:
+          type: boolean
+        require_approval:
+          type: string
+        secret_extension_endpoint:
+          type: string
+        secret_extension_netrc:
+          type: boolean
+        timeout:
+          type: integer
+        trusted:
+          $ref: '#/components/schemas/model.TrustedConfigurationPatch'
+        visibility:
+          type: string
+    Repo:
+      type: object
+      properties:
+        active:
+          type: boolean
+        allow_deploy:
+          type: boolean
+        allow_pr:
+          type: boolean
+        approval_allowed_users:
+          type: array
+          items:
+            type: string
+        avatar_url:
+          type: string
+        cancel_previous_pipeline_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        config_extension_endpoint:
+          type: string
+        config_extension_exclusive:
+          type: boolean
+        config_extension_netrc:
+          type: boolean
+        config_file:
+          type: string
+        default_branch:
+          type: string
+        forge_id:
+          type: integer
+        forge_remote_id:
+          description: ForgeRemoteID is the unique identifier for the repository on the forge.
+          type: string
+        forge_url:
+          type: string
+        full_name:
+          type: string
+        has_forge_name_conflict:
+          description: HasForgeNameConflict is true if forge returned a repo with same name but different forge remote id
+          type: boolean
+        has_no_forge_repo:
+          description: HasNoForgeRepo is true if repo only exist in the woodpecker store and not at the forge anymore
+          type: boolean
+        id:
+          type: integer
+        name:
+          type: string
+        netrc_trusted:
+          type: array
+          items:
+            type: string
+        org_id:
+          type: integer
+        owner:
+          type: string
+        pr_enabled:
+          type: boolean
+        private:
+          type: boolean
+        registry_extension_endpoint:
+          type: string
+        registry_extension_netrc:
+          type: boolean
+        require_approval:
+          $ref: '#/components/schemas/model.ApprovalMode'
+        secret_extension_endpoint:
+          type: string
+        secret_extension_netrc:
+          type: boolean
+        timeout:
+          type: integer
+        trusted:
+          $ref: '#/components/schemas/model.TrustedConfiguration'
+        visibility:
+          $ref: '#/components/schemas/RepoVisibility'
+    RepoVisibility:
+      type: string
+      enum:
+      - public
+      - private
+      - internal
+      x-enum-varnames:
+      - VisibilityPublic
+      - VisibilityPrivate
+      - VisibilityInternal
+    Perm:
+      type: object
+      properties:
+        admin:
+          type: boolean
+        created:
+          type: integer
+        pull:
+          type: boolean
+        push:
+          type: boolean
+        synced:
+          type: integer
+        updated:
+          type: integer
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual

@@ -1,0 +1,26 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Events API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Events
+paths:
+  /stream/events:
+    get:
+      description: With quic and http2 support
+      tags:
+      - Events
+      summary: Stream events like pipeline updates
+      responses:
+        '200':
+          description: OK

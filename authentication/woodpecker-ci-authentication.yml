@@ -1,0 +1,78 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/api
+docs: https://woodpecker-ci.org/docs/development/openapi
+spec: openapi/woodpecker-ci-server-swagger.json
+summary: >-
+  The Woodpecker server REST API is authenticated with a personal access token (PAT)
+  presented as an HTTP bearer token in the Authorization header. The published Swagger
+  2.0 document declares NO securityDefinitions block — swaggo emits the credential as
+  an ordinary required header parameter on each operation instead — so the auth model
+  has to be read from the operations and the docs rather than from a security scheme.
+  110 of the 118 operations carry the required `Authorization` header parameter with
+  the default value `Bearer <personal access token>`; the 8 that do not are the
+  unauthenticated system and badge endpoints.
+schemes:
+- name: PersonalAccessToken
+  type: http
+  scheme: bearer
+  in: header
+  parameter: Authorization
+  format: 'Bearer <personal access token>'
+  declared_as: >-
+    Required header parameter on each operation (Swagger 2.0 `parameters[].in: header`),
+    not a securityDefinitions entry.
+  operations_requiring: 110
+  how_to_obtain: >-
+    Log in to your Woodpecker server, click the user icon at the top right to open your
+    personal profile page, and copy the personal access token shown there. Verbatim from
+    info.description of the published Swagger document.
+  source: openapi/woodpecker-ci-server-swagger.json
+unauthenticated_operations:
+- path: /healthz
+  method: get
+  summary: Health information
+- path: /version
+  method: get
+  summary: Get version
+- path: /signature/public-key
+  method: get
+  summary: Get server's signature public key
+- path: /badges/{repo_id}/status.svg
+  method: get
+  summary: Get status of pipeline as SVG badge
+- path: /badges/{repo_id}/cc.xml
+  method: get
+  summary: Provide pipeline status information to the CCMenu tool
+- path: /hook
+  method: post
+  summary: >-
+    Incoming webhook from the forge. Not user-authenticated; verified by the forge
+    webhook secret configured when the repository is activated.
+- path: /stream/events
+  method: get
+  summary: >-
+    Server-Sent Event stream of pipeline updates. Public repositories stream without a
+    token; private repository events require a session.
+related_but_not_api_auth:
+- mechanism: Forge OAuth2
+  note: >-
+    End users sign in to the Woodpecker web UI through an OAuth2 app registered on the
+    configured forge (GitHub, GitLab, Gitea, Forgejo, Bitbucket). This authenticates the
+    HUMAN into the UI and mints the session that backs the PAT; it is not a scope-bearing
+    OAuth flow that an API client can run against the Woodpecker server itself. There is
+    therefore no OAuth scope surface to catalog and no scopes/ artifact.
+  docs: https://woodpecker-ci.org/docs/administration/configuration/forges/overview
+- mechanism: Agent shared secret
+  note: >-
+    Agents authenticate to the server over gRPC with WOODPECKER_AGENT_SECRET, a shared
+    secret configured by the operator. This is machine-to-machine transport for the
+    protobuf contract in grpc/woodpecker-ci-rpc.proto, not REST API auth.
+  docs: https://woodpecker-ci.org/docs/administration/configuration/agent
+gaps:
+- >-
+  The spec declares no securitySchemes/securityDefinitions and applies no `security`
+  block, so automated tooling scores Woodpecker as having undeclared authentication even
+  though every protected operation documents the header. Adding a bearer securityDefinition
+  and a global `security` requirement would be a one-line swaggo change with a large
+  downstream effect on generated clients.

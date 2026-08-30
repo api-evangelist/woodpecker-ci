@@ -1,0 +1,114 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Orgs API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Orgs
+paths:
+  /orgs:
+    get:
+      description: Returns all registered orgs in the system. Requires admin rights.
+      tags:
+      - Orgs
+      summary: List organizations
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Org'
+  /orgs/lookup/{org_full_name}:
+    get:
+      tags:
+      - Orgs
+      summary: Lookup an organization by full name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the organizations full name / slug
+        name: org_full_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Org'
+  /orgs/{org_id}:
+    delete:
+      description: Deletes the given org. Requires admin rights.
+      tags:
+      - Orgs
+      summary: Delete an organization
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the org's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+components:
+  schemas:
+    Org:
+      type: object
+      properties:
+        forge_id:
+          type: integer
+        id:
+          type: integer
+        is_user:
+          type: boolean
+        name:
+          type: string

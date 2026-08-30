@@ -1,0 +1,230 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Process profiling and debugging API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Process profiling and debugging
+paths:
+  /debug/pprof:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: List available pprof profiles (HTML)
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/block:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof stack traces that led to blocking on synchronization primitives
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/cmdline:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: Get the command line invocation of the current program
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/goroutine:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof stack traces of all current goroutines
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: Use debug=2 as a query parameter to export in the same format as an un-recovered panic
+        name: debug
+        in: query
+        schema:
+          type: integer
+          default: 1
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/heap:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof heap dump, a sampling of memory allocations of live objects
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: You can specify gc=heap to run GC before taking the heap sample
+        name: gc
+        in: query
+        schema:
+          type: string
+          default: ''
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/profile:
+    get:
+      description: 'Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+
+        After you get the profile file, use the go tool pprof command to investigate the profile.'
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof CPU profile
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: You can specify the duration in the seconds GET parameter.
+        name: seconds
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/symbol:
+    get:
+      description: 'Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+
+        Looks up the program counters listed in the request,
+
+        responding with a table mapping program counters to function names.
+
+        The requested program counters can be provided via GET + query parameters,
+
+        or POST + body parameters. Program counters shall be space delimited.'
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof program counters mapping to function names
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+    post:
+      description: 'Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+
+        Looks up the program counters listed in the request,
+
+        responding with a table mapping program counters to function names.
+
+        The requested program counters can be provided via GET + query parameters,
+
+        or POST + body parameters. Program counters shall be space delimited.'
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof program counters mapping to function names
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/threadcreate:
+    get:
+      description: Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+      tags:
+      - Process profiling and debugging
+      summary: Get pprof stack traces that led to the creation of new OS threads
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+  /debug/pprof/trace:
+    get:
+      description: 'Only available, when server was started with WOODPECKER_LOG_LEVEL=debug
+
+        After you get the profile file, use the go tool pprof command to investigate the profile.'
+      tags:
+      - Process profiling and debugging
+      summary: Get a trace of execution of the current program
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: You can specify the duration in the seconds GET parameter.
+        name: seconds
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK

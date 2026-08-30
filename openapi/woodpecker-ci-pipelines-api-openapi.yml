@@ -1,0 +1,901 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Pipelines API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Pipelines
+paths:
+  /repos/{repo_id}/pipelines:
+    get:
+      description: Get a list of pipelines for a repository.
+      tags:
+      - Pipelines
+      summary: List repository pipelines
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      - description: only return pipelines before this RFC3339 date
+        name: before
+        in: query
+        schema:
+          type: string
+      - description: only return pipelines after this RFC3339 date
+        name: after
+        in: query
+        schema:
+          type: string
+      - description: filter pipelines by branch
+        name: branch
+        in: query
+        schema:
+          type: string
+      - description: filter pipelines by webhook events (comma separated)
+        name: event
+        in: query
+        schema:
+          type: string
+      - description: filter pipelines by strings contained in ref
+        name: ref
+        in: query
+        schema:
+          type: string
+      - description: filter pipelines by status
+        name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pipeline'
+    post:
+      tags:
+      - Pipelines
+      summary: Trigger a manual pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pipeline'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PipelineOptions'
+        description: the options for the pipeline to run
+        required: true
+  /repos/{repo_id}/pipelines/{pipeline_number}:
+    get:
+      tags:
+      - Pipelines
+      summary: Get a repositories pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline, OR 'latest'
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pipeline'
+    post:
+      description: Restarts a pipeline optional with altered event, deploy or environment
+      tags:
+      - Pipelines
+      summary: Restart a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: override the event type
+        name: event
+        in: query
+        schema:
+          type: string
+      - description: override the target deploy value
+        name: deploy_to
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pipeline'
+    delete:
+      tags:
+      - Pipelines
+      summary: Delete a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No Content
+  /repos/{repo_id}/pipelines/{pipeline_number}/approve:
+    post:
+      tags:
+      - Pipelines
+      summary: Approve and start a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pipeline'
+  /repos/{repo_id}/pipelines/{pipeline_number}/cancel:
+    post:
+      tags:
+      - Pipelines
+      summary: Cancel a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+  /repos/{repo_id}/pipelines/{pipeline_number}/config:
+    get:
+      tags:
+      - Pipelines
+      summary: Get configuration files for a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Config'
+  /repos/{repo_id}/pipelines/{pipeline_number}/decline:
+    post:
+      tags:
+      - Pipelines
+      summary: Decline a pipeline
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pipeline'
+  /repos/{repo_id}/pipelines/{pipeline_number}/metadata:
+    get:
+      tags:
+      - Pipelines
+      summary: Get metadata for a pipeline or a specific workflow, including previous pipeline info
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the number of the pipeline
+        name: pipeline_number
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/metadata.Metadata'
+components:
+  schemas:
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
+    metadata.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    metadata.Workflow:
+      type: object
+      properties:
+        matrix:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        number:
+          type: integer
+    Config:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: integer
+        hash:
+          type: string
+        name:
+          type: string
+    metadata.Event:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    metadata.Metadata:
+      type: object
+      properties:
+        curr:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        forge:
+          $ref: '#/components/schemas/metadata.Forge'
+        id:
+          type: string
+        prev:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        repo:
+          $ref: '#/components/schemas/metadata.Repo'
+        step:
+          $ref: '#/components/schemas/metadata.Step'
+        sys:
+          $ref: '#/components/schemas/metadata.System'
+        workflow:
+          $ref: '#/components/schemas/metadata.Workflow'
+    metadata.System:
+      type: object
+      properties:
+        arch:
+          type: string
+        host:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        version:
+          type: string
+    metadata.Repo:
+      type: object
+      properties:
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        default_branch:
+          type: string
+        forge_url:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        org_id:
+          type: integer
+        owner:
+          type: string
+        private:
+          type: boolean
+        remote_id:
+          type: string
+        trusted:
+          $ref: '#/components/schemas/metadata.TrustedConfiguration'
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    PipelineOptions:
+      type: object
+      properties:
+        branch:
+          type: string
+        message:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    metadata.Forge:
+      type: object
+      properties:
+        type:
+          type: string
+        url:
+          type: string
+    metadata.Pipeline:
+      type: object
+      properties:
+        author:
+          type: string
+        avatar:
+          type: string
+        commit:
+          $ref: '#/components/schemas/metadata.Commit'
+        created:
+          type: integer
+        cron:
+          type: string
+        event:
+          $ref: '#/components/schemas/metadata.Event'
+        event_reason:
+          type: array
+          items:
+            type: string
+        finished:
+          type: integer
+        forge_url:
+          type: string
+        number:
+          type: integer
+        parent:
+          type: integer
+        release:
+          $ref: '#/components/schemas/metadata.Release'
+        rerun_count:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        target:
+          type: string
+        task:
+          type: string
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
+          type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
+    metadata.Author:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+    metadata.Step:
+      type: object
+      properties:
+        name:
+          type: string
+        number:
+          type: integer
+    CancelInfo:
+      type: object
+      properties:
+        canceled_by_step:
+          type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    Pipeline:
+      type: object
+      properties:
+        author:
+          description: 'TODO: only // The user sending the webhook data or triggering the pipeline event'
+          type: string
+        author_avatar:
+          description: 'TODO: only & rename to AuthorAvatar // Avatar URL of the author of the commit'
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        cancel_info:
+          $ref: '#/components/schemas/CancelInfo'
+        changed_files:
+          type: array
+          items:
+            type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        cron:
+          description: name of the cron job
+          type: string
+        deploy_task:
+          type: string
+        deploy_to:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/errors.PipelineError'
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        event_reason:
+          type: array
+          items:
+            type: string
+        finished:
+          type: integer
+        forge_url:
+          type: string
+        from_fork:
+          type: boolean
+        id:
+          type: integer
+        is_prerelease:
+          description: deprecated, use release.is_prerelease instead
+          type: boolean
+        message:
+          type: string
+        number:
+          type: integer
+        parent:
+          type: integer
+        pr_draft:
+          type: boolean
+        pr_labels:
+          type: array
+          items:
+            type: string
+        pr_milestone:
+          type: string
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        rerun_count:
+          type: integer
+        reviewed:
+          type: integer
+        reviewed_by:
+          type: string
+        sender:
+          description: uses reported user for webhooks and name of cron for cron pipelines
+          type: string
+        started:
+          type: integer
+        status:
+          $ref: '#/components/schemas/StatusValue'
+        tag_title:
+          type: string
+        timestamp:
+          type: integer
+        title:
+          description: // Deprecated
+          type: string
+        updated:
+          type: integer
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+        version:
+          type: string
+        workflows:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.Workflow'
+    metadata.Commit:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/metadata.Author'
+        branch:
+          type: string
+        changed_files:
+          type: array
+          items:
+            type: string
+        draft:
+          type: boolean
+        labels:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+        milestone:
+          type: string
+        ref:
+          type: string
+        refspec:
+          type: string
+        sha:
+          type: string
+        timestamp:
+          type: integer
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    metadata.Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual

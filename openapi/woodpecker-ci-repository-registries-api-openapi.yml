@@ -1,0 +1,205 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Repository registries API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Repository registries
+paths:
+  /repos/{repo_id}/registries:
+    get:
+      tags:
+      - Repository registries
+      summary: List registries
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Registry'
+    post:
+      tags:
+      - Repository registries
+      summary: Create a registry
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the new registry data
+        required: true
+  /repos/{repo_id}/registries/{registry}:
+    get:
+      tags:
+      - Repository registries
+      summary: Get a registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the registry name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+    delete:
+      tags:
+      - Repository registries
+      summary: Delete a registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the registry name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+    patch:
+      tags:
+      - Repository registries
+      summary: Update a registry by name
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the repository id
+        name: repo_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the registry name
+        name: registry
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registry'
+        description: the attributes for the registry
+        required: true
+components:
+  schemas:
+    Registry:
+      type: object
+      properties:
+        address:
+          type: string
+        id:
+          type: integer
+        org_id:
+          type: integer
+        password:
+          type: string
+        readonly:
+          type: boolean
+        repo_id:
+          type: integer
+        username:
+          type: string

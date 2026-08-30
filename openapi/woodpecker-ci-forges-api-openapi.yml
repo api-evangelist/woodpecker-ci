@@ -1,0 +1,225 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Forges API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Forges
+paths:
+  /forges:
+    get:
+      tags:
+      - Forges
+      summary: List forges
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Forge'
+    post:
+      description: Creates a new forge with a random token
+      tags:
+      - Forges
+      summary: Create a new forge
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forge'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgeWithOAuthClientSecret'
+        description: the forge's data (only 'name' and 'no_schedule' are read)
+        required: true
+  /forges/{forge_id}:
+    get:
+      tags:
+      - Forges
+      summary: Get a forge
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the forge's id
+        name: forge_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forge'
+    delete:
+      tags:
+      - Forges
+      summary: Delete a forge
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the forge's id
+        name: forge_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags:
+      - Forges
+      summary: Update a forge
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the forge's id
+        name: forge_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forge'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgeWithOAuthClientSecret'
+        description: the forge's data
+        required: true
+components:
+  schemas:
+    ForgeWithOAuthClientSecret:
+      type: object
+      properties:
+        additional_options:
+          type: object
+          additionalProperties: {}
+        client:
+          type: string
+        id:
+          type: integer
+        oauth_client_secret:
+          type: string
+        oauth_host:
+          description: public url for oauth if different from url
+          type: string
+        orgs:
+          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
+          type: array
+          items:
+            type: string
+        skip_verify:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/model.ForgeType'
+        url:
+          type: string
+    Forge:
+      type: object
+      properties:
+        additional_options:
+          type: object
+          additionalProperties: {}
+        client:
+          type: string
+        id:
+          type: integer
+        oauth_host:
+          description: public url for oauth if different from url
+          type: string
+        orgs:
+          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
+          type: array
+          items:
+            type: string
+        skip_verify:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/model.ForgeType'
+        url:
+          type: string
+    model.ForgeType:
+      type: string
+      enum:
+      - github
+      - gitlab
+      - gitea
+      - forgejo
+      - bitbucket
+      - bitbucket-dc
+      - addon
+      x-enum-varnames:
+      - ForgeTypeGithub
+      - ForgeTypeGitlab
+      - ForgeTypeGitea
+      - ForgeTypeForgejo
+      - ForgeTypeBitbucket
+      - ForgeTypeBitbucketDatacenter
+      - ForgeTypeAddon

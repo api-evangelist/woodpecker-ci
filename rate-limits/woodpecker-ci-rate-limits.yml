@@ -1,0 +1,36 @@
+generated: '2026-08-27'
+method: probed
+source: >-
+  https://woodpecker-ci.org/docs/administration/configuration/server (searched, no limits
+  documented) plus live response-header inspection of https://ci.woodpecker-ci.org/api on
+  2026-08-27
+limit_count: 0
+limits: []
+response_headers: []
+status_on_exhaustion: null
+retry_after: false
+note: >-
+  Woodpecker publishes no rate limits and emits no rate-limit signal. Live responses from
+  the reference instance carry no X-RateLimit-*, no RateLimit-* and no Retry-After header
+  on either a 200 or a 401. There is no rate-limiting section in the server configuration
+  documentation. This is consistent with the deployment model — the API is served by an
+  operator's own single-tenant server, so throttling is whatever the operator puts in front
+  of it. An agent integrating with a Woodpecker server therefore has no runtime backpressure
+  signal at all and must implement its own pacing. Recorded as an honest zero.
+observed:
+- url: https://ci.woodpecker-ci.org/api/user
+  status: 401
+  rate_limit_headers: none
+  headers_present: [access-control-allow-origin, cache-control, content-type, x-content-type-options, x-frame-options, x-woodpecker-version, x-xss-protection]
+  probed: '2026-08-27'
+- url: https://ci.woodpecker-ci.org/version
+  status: 200
+  rate_limit_headers: none
+  probed: '2026-08-27'
+related_concurrency_controls:
+  note: >-
+    Not rate limits, but the closest published throttles: per-agent `capacity`
+    (WOODPECKER_MAX_WORKFLOWS) bounds how many workflows an agent runs at once, and queue
+    Tasks carry `concurrency_group` and `concurrency_limit`. Both govern pipeline execution,
+    not API request volume.
+  source: openapi/woodpecker-ci-server-swagger.json (definitions Agent, model.QueueTask)

@@ -1,0 +1,459 @@
+openapi: 3.2.0
+info:
+  description: 'Woodpecker is a simple, yet powerful CI/CD engine with great extensibility.
+
+    To get a personal access token (PAT) for authentication, please log in your Woodpecker server,
+
+    and go to you personal profile page, by clicking the user icon at the top right.'
+  title: Woodpecker CI Agents API
+  contact:
+    name: Woodpecker CI
+    url: https://woodpecker-ci.org/
+  version: next-a4cb541b82
+servers:
+- url: https://ci.woodpecker-ci.org/api
+tags:
+- name: Agents
+paths:
+  /agents:
+    get:
+      tags:
+      - Agents
+      summary: List agents
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agent'
+    post:
+      description: Creates a new agent with a random token
+      tags:
+      - Agents
+      summary: Create a new agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        description: the agent's data (only 'name' and 'no_schedule' are read)
+        required: true
+  /agents/{agent_id}:
+    get:
+      tags:
+      - Agents
+      summary: Get an agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+    delete:
+      tags:
+      - Agents
+      summary: Delete an agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags:
+      - Agents
+      summary: Update an agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        description: the agent's data
+        required: true
+  /agents/{agent_id}/tasks:
+    get:
+      tags:
+      - Agents
+      summary: List agent tasks
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+  /orgs/{org_id}/agents:
+    get:
+      tags:
+      - Agents
+      summary: List agents for an organization
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the organization's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: for response pagination, page offset number
+        name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - description: for response pagination, max items per page
+        name: perPage
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agent'
+    post:
+      description: Creates a new agent with a random token, scoped to the specified organization
+      tags:
+      - Agents
+      summary: Create a new organization-scoped agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the organization's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        description: the agent's data (only 'name' and 'no_schedule' are read)
+        required: true
+  /orgs/{org_id}/agents/{agent_id}:
+    delete:
+      tags:
+      - Agents
+      summary: Delete an organization-scoped agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the organization's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No Content
+    patch:
+      tags:
+      - Agents
+      summary: Update an organization-scoped agent
+      parameters:
+      - description: Insert your personal access token
+        name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+          default: Bearer <personal access token>
+      - description: the organization's id
+        name: org_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - description: the agent's id
+        name: agent_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        description: the agent's updated data
+        required: true
+components:
+  schemas:
+    Agent:
+      type: object
+      properties:
+        backend:
+          type: string
+        capacity:
+          type: integer
+        created:
+          type: integer
+        custom_labels:
+          type: object
+          additionalProperties:
+            type: string
+        id:
+          type: integer
+        last_contact:
+          type: integer
+        last_work:
+          description: last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
+          type: integer
+        name:
+          type: string
+        no_schedule:
+          type: boolean
+        org_id:
+          description: OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
+          type: integer
+        owner_id:
+          type: integer
+        platform:
+          type: string
+        token:
+          type: string
+        updated:
+          type: integer
+        version:
+          type: string
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    Task:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        concurrency_group:
+          description: 'ConcurrencyGroup identifies tasks that are limited against each other.
+
+            It is empty when no concurrency limit applies.'
+          type: string
+        concurrency_limit:
+          description: 'ConcurrencyLimit is the maximum number of tasks sharing the same
+
+            ConcurrencyGroup that may run at once. A value <= 0 means unlimited.'
+          type: integer
+        created:
+          description: 'Created is the unix timestamp the task''s pipeline was created at. It
+
+            defines the queue ordering across pipelines.'
+          type: integer
+        dep_status:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatusValue'
+        dependencies:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        repo_id:
+          type: integer
+        run_on:
+          type: array
+          items:
+            type: string
