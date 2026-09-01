@@ -1,0 +1,150 @@
+generated: '2026-08-27'
+method: searched
+source: https://proxy.golang.org/, https://registry.npmjs.org/, https://hub.docker.com/u/woodpeckerci, https://github.com/woodpecker-ci/woodpecker/releases, https://woodpecker-ci.org/docs/administration/installation/packages
+note: >-
+  Woodpecker CI is self-hosted open-source software, so its "packages" are a mix of
+  a Go client library (the only true SDK), the server/agent/CLI binaries themselves,
+  container images, distribution packages and a Helm chart. Versions and dates below
+  were read from each registry's own metadata endpoint on 2026-08-27.
+packages:
+- name: go.woodpecker-ci.org/woodpecker/v3
+  registry: go
+  language: Go
+  official: true
+  kind: module
+  version: v3.18.0
+  published: '2026-08-24'
+  url: https://pkg.go.dev/go.woodpecker-ci.org/woodpecker/v3
+  source: https://proxy.golang.org/go.woodpecker-ci.org/woodpecker/v3/@latest
+  note: >-
+    The main Woodpecker Go module. It contains the server, agent, CLI and the
+    first-party REST client library under woodpecker-go/.
+- name: go.woodpecker-ci.org/woodpecker/v3/woodpecker-go/woodpecker
+  registry: go
+  language: Go
+  official: true
+  kind: sdk
+  version: v3.18.0
+  published: '2026-08-24'
+  url: https://pkg.go.dev/go.woodpecker-ci.org/woodpecker/v3/woodpecker-go/woodpecker
+  source: https://github.com/woodpecker-ci/woodpecker/tree/main/woodpecker-go
+  note: >-
+    First-party Go client for the Woodpecker server REST API. Versioned with the
+    server, so the SDK never lags the API it wraps. This is the only first-party
+    SDK the project publishes.
+- name: go.woodpecker-ci.org/woodpecker/v2
+  registry: go
+  language: Go
+  official: true
+  kind: module
+  version: v2.8.3
+  published: '2025-01-12'
+  url: https://pkg.go.dev/go.woodpecker-ci.org/woodpecker/v2
+  source: https://proxy.golang.org/go.woodpecker-ci.org/woodpecker/v2/@latest
+  note: Previous major line, superseded by v3. Retained for 2.x operators.
+- name: '@woodpecker-ci/plugin'
+  registry: npm
+  language: TypeScript
+  official: true
+  kind: library
+  version: 0.2.1
+  published: '2025-09-30'
+  url: https://www.npmjs.com/package/@woodpecker-ci/plugin
+  source: https://registry.npmjs.org/@woodpecker-ci/plugin
+  note: >-
+    Utilities for authoring a Woodpecker pipeline plugin in TypeScript/JavaScript.
+    Published under the project's own @woodpecker-ci npm scope; the source repository
+    lives in the woodpecker-plugins organization on Codeberg, which is the plugin
+    home linked from https://woodpecker-ci.org/plugins. Not a REST API client.
+- name: go.woodpecker-ci.org/autoscaler
+  registry: go
+  language: Go
+  official: true
+  kind: tool
+  version: 1.5.0
+  published: '2026-05-19'
+  url: https://github.com/woodpecker-ci/autoscaler
+  source: https://github.com/woodpecker-ci/autoscaler/releases
+  note: >-
+    Official agent autoscaler. proxy.golang.org has no tagged module version for it
+    (@latest resolves to a pseudo-version, v0.0.0-20250125012534-9cf2f79135c9); the
+    version and date recorded here are the GitHub release, which is how the project
+    distributes it.
+- name: woodpeckerci/woodpecker-server
+  registry: container
+  language: Go
+  official: true
+  kind: image
+  version: 3.18.0
+  published: '2026-08-24'
+  url: https://hub.docker.com/r/woodpeckerci/woodpecker-server
+  source: https://hub.docker.com/v2/repositories/woodpeckerci/woodpecker-server/tags
+  note: >-
+    Also mirrored to ghcr.io/woodpecker-ci/woodpecker-server. The registry additionally
+    carries floating `next` / `next-alpine` tags rebuilt from main (last seen 2026-08-27);
+    the pinned version recorded here is the current stable release.
+- name: woodpeckerci/woodpecker-agent
+  registry: container
+  language: Go
+  official: true
+  kind: image
+  version: 3.18.0
+  published: '2026-08-24'
+  url: https://hub.docker.com/r/woodpeckerci/woodpecker-agent
+  source: https://github.com/woodpecker-ci/woodpecker/releases/tag/v3.18.0
+- name: woodpeckerci/woodpecker-cli
+  registry: container
+  language: Go
+  official: true
+  kind: image
+  version: 3.18.0
+  published: '2026-08-24'
+  url: https://hub.docker.com/r/woodpeckerci/woodpecker-cli
+  source: https://hub.docker.com/v2/repositories/woodpeckerci/woodpecker-cli/tags
+- name: woodpecker (Helm chart)
+  registry: oci
+  language: Go Template
+  official: true
+  kind: helm-chart
+  version: 3.7.2
+  published: '2026-08-24'
+  url: https://github.com/woodpecker-ci/helm
+  source: https://github.com/woodpecker-ci/helm/releases
+  note: >-
+    Distributed as an OCI chart from ghcr.io/woodpecker-ci/helm. Chart versions track
+    their own line (3.7.x), not the server version.
+- name: woodpecker-server / woodpecker-agent / woodpecker-cli (DEB + RPM)
+  registry: github-releases
+  language: Go
+  official: true
+  kind: distribution-package
+  version: 3.18.0
+  published: '2026-08-24'
+  url: https://woodpecker-ci.org/docs/administration/installation/packages
+  source: https://github.com/woodpecker-ci/woodpecker/releases/tag/v3.18.0
+  note: >-
+    Official DEB and RPM packages for linux/amd64 and linux/arm64, plus binary tarballs
+    for linux, darwin, freebsd, openbsd and windows, attached to each GitHub release.
+    No package-manager repository is hosted; the docs point at the release assets.
+community_packages:
+- note: >-
+    The project explicitly disclaims maintenance of these and lists them as community
+    packages at https://woodpecker-ci.org/docs/administration/installation/packages —
+    Alpine (Edge), Arch Linux, openSUSE, YunoHost, Cloudron, Easypanel, Homebrew (CLI
+    only) and the NixOS module in nixpkgs.
+  official: false
+  version: null
+absent:
+- registry: pypi
+  checked: '2026-08-27'
+  status: 404
+  note: No Python client published; https://pypi.org/pypi/woodpecker-ci/json returns 404.
+- registry: npm
+  checked: '2026-08-27'
+  note: >-
+    No first-party JavaScript REST client. npm carries only third-party Woodpecker
+    packages (woodpecker-ci-mcp, @devpuccino/mcp-woodpecker, woodpecker-api) which
+    are not published by the project.
+  version: null
+sdk_count: 1
+official_package_count: 10

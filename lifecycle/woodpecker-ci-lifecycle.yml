@@ -1,0 +1,112 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/docs/development/deprecations, https://woodpecker-ci.org/migrations, https://github.com/woodpecker-ci/woodpecker/releases
+versioning:
+  scheme: semver
+  current_version: 3.18.0
+  current_release_date: '2026-08-24'
+  api_versioning: none
+  note: >-
+    The REST API is not independently versioned — no /v1 path segment and no version
+    header. It ships with the server, and `info.version` in the Swagger document reports
+    the running build. Because Woodpecker is self-hosted, the API surface a client meets
+    is decided by the operator's installed release, not by the project.
+  release_cadence_observed:
+  - version: 3.18.0
+    date: '2026-08-24'
+  - version: 3.17.0
+    date: '2026-07-31'
+  - version: 3.16.0
+    date: '2026-06-27'
+  - version: 3.15.0
+    date: '2026-05-28'
+  - version: 3.14.1
+    date: '2026-05-12'
+  - version: 3.14.0
+    date: '2026-05-01'
+  cadence_note: >-
+    A minor release roughly every month through 2026, with release candidates published
+    ahead of minors. Read from the GitHub releases feed on 2026-08-27.
+deprecation_policy:
+  published: true
+  url: https://woodpecker-ci.org/docs/development/deprecations
+  scope: >-
+    The written policy governs pipeline configuration (YAML) syntax. The same
+    major-version cadence is applied to API model changes, which are announced on the
+    migrations page.
+  process:
+  - stage: 'Minor version N.x'
+    behaviour: >-
+      Linter shows a WARNING, not an error. The old syntax remains functional and the
+      documentation is updated to the new syntax. The warning message includes guidance
+      on the required change.
+  - stage: 'Major version (N+1).0'
+    behaviour: >-
+      The warning becomes an ERROR — the pipeline fails. The old syntax is no longer
+      supported and the breaking change is documented in the migration guide.
+  - stage: 'Minor version (N+1).x'
+    behaviour: >-
+      Deprecated code paths are removed and the parser no longer recognises the old
+      syntax.
+  worked_example: >-
+    `secrets: [token]` was deprecated with a linter warning in v2.5.0, kept working
+    through v2.6–v2.9, became a linter error in v3.0.0, and had its code path removed in
+    v3.1.0 — a full major cycle of runway.
+  sunset_headers: false
+  sunset_header_note: >-
+    No RFC 8594 Sunset or Deprecation response headers are emitted; deprecation is
+    communicated in the linter, the docs and the migration guide, not on the wire.
+migration_guide:
+  url: https://woodpecker-ci.org/migrations
+  api_deprecations_announced:
+  - change: >-
+      The Pipeline model is moving to nested objects grouped by event. `title` is
+      deprecated in favour of `release.title` (release events); `message` in favour of
+      `tag_title` (tag events); `is_prerelease` in favour of `release.is_prerelease`;
+      deriving the tag from `ref` in favour of `tag_title`.
+    status: announced-for-next
+    source: https://woodpecker-ci.org/migrations
+  - change: >-
+      Already applied in the 3.x line: `sender` replaced by `cron` for cron events, as
+      part of the same nested-Pipeline-model migration.
+    status: applied
+    source: https://woodpecker-ci.org/migrations
+  - change: >-
+      Environment variables `CI_COMMIT_AUTHOR_AVATAR` / `CI_PREV_COMMIT_AUTHOR_AVATAR`
+      deprecated in favour of `CI_PIPELINE_AVATAR` / `CI_PREV_PIPELINE_AVATAR`;
+      `CI_COMMIT_PRERELEASE` in favour of `CI_PIPELINE_RELEASE_PRE`; the `runs_on`
+      workflow property in favour of `when.status`.
+    status: announced-for-next
+    source: https://woodpecker-ci.org/migrations
+deprecated_operations_in_spec: []
+deprecated_operations_note: >-
+  No operation in openapi/woodpecker-ci-server-swagger.json carries `deprecated: true`.
+  The deprecations that exist are at the MODEL/property level and are published on the
+  migrations page rather than marked in the contract, so a client generated from the
+  spec gets no deprecation signal.
+status_page:
+  published: false
+  probed:
+  - url: https://status.woodpecker-ci.org/
+    status: DNS NXDOMAIN
+    checked: '2026-08-27'
+  note: >-
+    No status page, and none would be meaningful: Woodpecker is self-hosted software with
+    no operated service. The project's own instance at ci.woodpecker-ci.org is a
+    demonstration/dogfooding deployment, not a product. No StatusPage pointer is emitted.
+sla:
+  published: false
+  note: >-
+    No SLA. The project is Apache-2.0 open-source software with no hosted offering, and
+    the operator carries availability.
+support_policy:
+  published: false
+  note: >-
+    No formal supported-version or LTS window is published. In practice the 3.x line
+    receives releases and 2.x has had no tagged Go module release since v2.8.3
+    (2025-01-12).
+governance:
+  url: https://github.com/woodpecker-ci/.github/blob/main/GOVERNANCE.md
+  note: The project publishes a written governance document for its maintainer group.
+end_of_life:
+  announced: []

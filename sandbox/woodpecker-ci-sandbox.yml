@@ -1,0 +1,70 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/docs/usage/local-execution, https://woodpecker-ci.org/docs/cli
+summary: >-
+  Woodpecker publishes no hosted API sandbox and no test-mode credentials — there is no
+  hosted service, so there are no test-vs-live keys to document. What it does publish is a
+  first-class LOCAL rehearsal surface: `woodpecker-cli exec` runs a workflow file straight
+  from a checkout with no server, and a linter that validates the file against the
+  published JSON Schema before it is pushed. Every install also ships a web console. Both
+  are recorded here honestly for what they are; nothing about test cards, test tokens or
+  test clocks applies to this product.
+test_vs_live_keys:
+  applicable: false
+  note: Self-hosted software. Tokens are minted by the operator's own server; there is no test mode.
+local_execution:
+  command: woodpecker-cli exec
+  docs: https://woodpecker-ci.org/docs/usage/local-execution
+  purpose: >-
+    "Use it to test pipeline changes before pushing them, to debug a workflow without
+    waiting for a server run, or to replay a server pipeline with downloaded metadata."
+    (verbatim from the docs page)
+  examples_published:
+  - woodpecker-cli exec .woodpecker/my-first-workflow.yaml
+  - woodpecker-cli exec .woodpecker/
+  - woodpecker-cli exec --backend-engine docker .woodpecker/my-first-workflow.yaml
+  - woodpecker-cli exec --backend-engine local .woodpecker/my-first-workflow.yaml
+  metadata_override:
+    flags: [--pipeline-event, --commit-branch, --commit-sha, --repo, --metadata-file]
+    purpose: >-
+      Override the automatically-set metadata to exercise conditions such as branches,
+      pull requests, tags and events without producing them for real.
+    caveat: >-
+      The docs warn explicitly that the metadata file "is not a stable, portable API: its
+      format is only guaranteed for the same server and CLI version it came from."
+  secrets:
+    note: >-
+      Secrets are NOT downloaded from the server for local runs. Values must be passed
+      explicitly with --secrets key=value or --secrets-file pointing at a git-ignored
+      local YAML file.
+  fixture_values_published: false
+  fixture_note: >-
+    The project publishes no canned test values (no magic identifiers, no test cards, no
+    sample tokens). The docs examples use obvious placeholders. Nothing is invented here.
+linter:
+  command: woodpecker-cli lint
+  schema: json-schema/woodpecker-ci-pipeline-schema.json
+  schema_url: https://raw.githubusercontent.com/woodpecker-ci/woodpecker/main/pipeline/frontend/yaml/linter/schema/schema.json
+  docs: https://woodpecker-ci.org/docs/usage/linter
+  note: >-
+    Validates a workflow file against the published draft-07 JSON Schema, and is also the
+    channel through which deprecated syntax is surfaced (warning in minor N.x, error in
+    major (N+1).0).
+console:
+  present: true
+  kind: self-hosted web UI
+  reference_instance: https://ci.woodpecker-ci.org/
+  note: >-
+    Every Woodpecker server ships a web console. The project runs its own public instance
+    at ci.woodpecker-ci.org, which serves the reference Swagger UI at
+    https://ci.woodpecker-ci.org/swagger/index.html. It is a live dogfooding deployment of
+    the project's own CI, not a hosted sandbox offered to users, and writing to it requires
+    an account on that server.
+swagger_ui:
+  url: https://ci.woodpecker-ci.org/swagger/index.html
+  status: 200
+  probed: '2026-08-27'
+  note: >-
+    Interactive Swagger UI is bundled with the server, so every operator gets a try-it
+    console for their own instance.
+test_clocks: false

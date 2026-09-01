@@ -1,0 +1,182 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/woodpecker-ci-server-swagger.json (definitions + path parameters)
+note: >-
+  Derived from the 51 definitions in the published Swagger document and from the id
+  reference fields those definitions declare. The spec uses integer surrogate keys with no
+  id prefixes, so there is no id-prefix table to record. Relationship direction is read
+  from `*_id` fields and from the nesting of the URL paths.
+entities:
+- name: Forge
+  description: A configured Git forge (GitHub, GitLab, Gitea, Forgejo, Bitbucket) the server authenticates against.
+  key: id
+  fields: [id, type, url, client, oauth_host, orgs, skip_verify, additional_options]
+  paths: [/forges, '/forges/{forge_id}']
+- name: Org
+  description: An organization on a forge, mirrored into Woodpecker.
+  key: id
+  fields: [id, name, forge_id, is_user]
+  paths: [/orgs, '/orgs/{org_id}', '/orgs/lookup/{org_full_name}']
+- name: User
+  description: A Woodpecker user account, backed by a forge identity.
+  key: id
+  fields: [id, login, email, avatar_url, admin, admin_env, org_id, forge_id, forge_remote_id]
+  paths: [/user, /users, '/users/{login}']
+- name: Repo
+  description: A repository activated for CI on this server.
+  key: id
+  fields: [id, name, owner, full_name, org_id, forge_id, forge_remote_id, active, private, visibility, trusted, require_approval, timeout, config_file, default_branch, clone_url, clone_url_ssh]
+  paths: [/repos, '/repos/{repo_id}', '/repos/lookup/{repo_full_name}']
+- name: Pipeline
+  description: One CI run for a repository, numbered per repository.
+  key: id
+  natural_key: number (unique within a repo)
+  fields: [id, number, status, event, event_reason, branch, commit, ref, refspec, message, title, tag_title, release, is_prerelease, author, sender, created, started, finished, updated, parent, rerun_count, reviewed, reviewed_by, errors, changed_files, workflows, cancel_info, deploy_to, deploy_task, cron, variables, from_fork, pr_draft, pr_labels, pr_milestone, version]
+  paths: ['/repos/{repo_id}/pipelines', '/repos/{repo_id}/pipelines/{pipeline_number}', /pipelines]
+- name: Workflow
+  description: One workflow file's execution inside a pipeline; a pipeline can contain several.
+  key: id
+  fields: [id, pipeline_id, name, pid, state, error, environ, platform, agent_id, started, finished, children]
+  definition: model.Workflow
+- name: Step
+  description: A single step inside a workflow.
+  key: id
+  fields: [id, uuid, pipeline_id, pid, ppid, name, state, type, error, exit_code, started, finished]
+- name: LogEntry
+  description: One line of step output, indexed and ordered.
+  paths: ['/repos/{repo_id}/logs/{pipeline_number}/{step_id}', '/stream/logs/{repo_id}/{pipeline}/{step_id}']
+- name: Secret
+  description: A masked value injected into pipelines. Exists at global, organization and repository scope.
+  key: id
+  fields: [id, name, value, events, images, note, org_id, repo_id]
+  paths: [/secrets, '/orgs/{org_id}/secrets', '/repos/{repo_id}/secrets']
+- name: Registry
+  description: Container registry credentials. Exists at global, organization and repository scope.
+  key: id
+  fields: [id, address, username, password, readonly, org_id, repo_id]
+  paths: [/registries, '/orgs/{org_id}/registries', '/repos/{repo_id}/registries']
+- name: Cron
+  description: A scheduled pipeline trigger owned by a repository.
+  key: id
+  fields: [id, name, repo_id, creator_id, schedule, timezone, branch, enabled, next_exec, created, variables]
+  paths: ['/repos/{repo_id}/cron', '/repos/{repo_id}/cron/{cron}']
+- name: Agent
+  description: A worker that claims and executes tasks. Global or organization-scoped.
+  key: id
+  fields: [id, name, token, backend, platform, capacity, custom_labels, no_schedule, org_id, owner_id, version, last_contact, last_work, created, updated]
+  paths: [/agents, '/agents/{agent_id}', '/orgs/{org_id}/agents']
+- name: Task
+  description: A queued unit of work an agent claims, with labels, dependencies and concurrency grouping.
+  key: id
+  fields: [id, pipeline_id, repo_id, agent_id, name, pid, labels, dependencies, dep_status, run_on, concurrency_group, concurrency_limit, created]
+  paths: [/queue/info, /pipelines]
+- name: Perm
+  description: A user's cached permissions on a repository.
+  fields: [pull, push, admin, synced, created, updated]
+  paths: ['/repos/{repo_id}/permissions']
+- name: OrgPerm
+  description: A user's permissions in an organization.
+  fields: [member, admin]
+  paths: ['/orgs/{org_id}/permissions']
+- name: Feed
+  description: A denormalized pipeline summary for the authenticated user's activity feed.
+  paths: [/user/feed]
+- name: Config
+  description: The workflow configuration file(s) resolved for a pipeline.
+  fields: [name, data, hash]
+  paths: ['/repos/{repo_id}/pipelines/{pipeline_number}/config']
+- name: PullRequest
+  description: An open pull request on a repository, listed so a pipeline can be triggered against it.
+  paths: ['/repos/{repo_id}/pull_requests']
+relationships:
+- from: Forge
+  to: Org
+  type: has_many
+  via: Org.forge_id
+- from: Forge
+  to: User
+  type: has_many
+  via: User.forge_id
+- from: Org
+  to: Repo
+  type: has_many
+  via: Repo.org_id
+- from: Repo
+  to: Forge
+  type: belongs_to
+  via: Repo.forge_id
+- from: Repo
+  to: Pipeline
+  type: has_many
+  via: 'path /repos/{repo_id}/pipelines'
+- from: Pipeline
+  to: Workflow
+  type: has_many
+  via: model.Workflow.pipeline_id (also Pipeline.workflows)
+- from: Workflow
+  to: Step
+  type: has_many
+  via: Step.pipeline_id + Step.ppid (parent pid)
+- from: Pipeline
+  to: Pipeline
+  type: belongs_to
+  via: Pipeline.parent
+  note: Self-reference; a restarted or child pipeline points at its parent.
+- from: Repo
+  to: Cron
+  type: has_many
+  via: Cron.repo_id
+- from: Cron
+  to: User
+  type: belongs_to
+  via: Cron.creator_id
+- from: Repo
+  to: Secret
+  type: has_many
+  via: Secret.repo_id
+- from: Org
+  to: Secret
+  type: has_many
+  via: Secret.org_id
+- from: Repo
+  to: Registry
+  type: has_many
+  via: Registry.repo_id
+- from: Org
+  to: Registry
+  type: has_many
+  via: Registry.org_id
+- from: Org
+  to: Agent
+  type: has_many
+  via: Agent.org_id
+- from: User
+  to: Agent
+  type: has_many
+  via: Agent.owner_id
+- from: Agent
+  to: Task
+  type: has_many
+  via: Task.agent_id
+- from: Pipeline
+  to: Task
+  type: has_many
+  via: Task.pipeline_id
+- from: Repo
+  to: Task
+  type: has_many
+  via: Task.repo_id
+- from: User
+  to: Perm
+  type: has_many
+  via: 'path /repos/{repo_id}/permissions (per authenticated user)'
+scoping_pattern:
+  note: >-
+    Secrets and registries are modelled once and exposed at three scopes — global
+    (/secrets, /registries), organization (/orgs/{org_id}/...) and repository
+    (/repos/{repo_id}/...) — distinguished by whether org_id or repo_id is set. Agents are
+    exposed at two (global and organization). This is the single most repeated shape in
+    the API and accounts for a large share of its 118 operations.
+id_prefixes:
+  used: false
+  note: All primary keys are plain integers. There is no prefixed-id scheme to decode.

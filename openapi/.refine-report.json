@@ -1,0 +1,62 @@
+{
+  "provider": "woodpecker-ci",
+  "sources": [
+    "woodpecker-ci-server-swagger.json"
+  ],
+  "outputs": [
+    "woodpecker-ci-agents-api-openapi.yml",
+    "woodpecker-ci-badges-api-openapi.yml",
+    "woodpecker-ci-events-api-openapi.yml",
+    "woodpecker-ci-forges-api-openapi.yml",
+    "woodpecker-ci-organization-api-openapi.yml",
+    "woodpecker-ci-organization-permissions-api-openapi.yml",
+    "woodpecker-ci-organization-registries-api-openapi.yml",
+    "woodpecker-ci-organization-secrets-api-openapi.yml",
+    "woodpecker-ci-orgs-api-openapi.yml",
+    "woodpecker-ci-pipeline-logs-api-openapi.yml",
+    "woodpecker-ci-pipeline-queues-api-openapi.yml",
+    "woodpecker-ci-pipelines-api-openapi.yml",
+    "woodpecker-ci-process-profiling-and-debugging-api-openapi.yml",
+    "woodpecker-ci-registries-api-openapi.yml",
+    "woodpecker-ci-repositories-api-openapi.yml",
+    "woodpecker-ci-repository-cron-jobs-api-openapi.yml",
+    "woodpecker-ci-repository-registries-api-openapi.yml",
+    "woodpecker-ci-repository-secrets-api-openapi.yml",
+    "woodpecker-ci-secrets-api-openapi.yml",
+    "woodpecker-ci-system-api-openapi.yml",
+    "woodpecker-ci-user-api-openapi.yml",
+    "woodpecker-ci-users-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/woodpecker-ci-server-swagger.json"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "woodpecker-ci-server-swagger.json: upgraded swagger 2.0 -> OpenAPI 3.2.0",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Agents",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Badges",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Events",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Forges",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Organization",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Organization permissions",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Organization registries",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Organization secrets",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Orgs",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Pipeline logs",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Pipeline queues",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Pipelines",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Process profiling and debugging",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Registries",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Repositories",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Repository cron jobs",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Repository registries",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Repository secrets",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Secrets",
+    "woodpecker-ci-server-swagger.json: declared missing tag: System",
+    "woodpecker-ci-server-swagger.json: declared missing tag: User",
+    "woodpecker-ci-server-swagger.json: declared missing tag: Users",
+    "apis.yml register: written (+22 apis, 22 total)"
+  ],
+  "skipped": []
+}

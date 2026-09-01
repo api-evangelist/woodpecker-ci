@@ -1,0 +1,73 @@
+generated: '2026-08-27'
+method: derived
+source: openapi/woodpecker-ci-server-swagger.json + live probes of https://ci.woodpecker-ci.org/api (2026-08-27)
+format: plain-text
+rfc9457: false
+summary: >-
+  Woodpecker's published Swagger document documents almost no failure responses. Across
+  118 operations it declares 98 `200`, 20 `204` and exactly ONE non-2xx response — a 500
+  on GET /healthz. Every 4xx an agent will actually meet is undeclared. The runtime
+  envelope, confirmed live, is a bare `text/plain` string (or an empty body) with the
+  meaning carried entirely by the HTTP status code. There is no error code registry, no
+  problem+json, and no machine-parseable error object to catalogue, so this file records
+  the envelope and the observed statuses rather than inventing a code list.
+envelope:
+  content_type: text/plain; charset=utf-8
+  body: A single human-readable sentence, or an empty body.
+  fields: []
+  example_observed:
+    request: GET https://ci.woodpecker-ci.org/api/user (no Authorization header)
+    status: 401
+    content_type: text/plain; charset=utf-8
+    body: User not authorized
+    probed: '2026-08-27'
+declared_in_spec:
+- status: '500'
+  path: /healthz
+  method: get
+  description: Server is in an unhealthy state
+  source: openapi/woodpecker-ci-server-swagger.json
+observed_live:
+- status: 401
+  path: /api/user
+  body: User not authorized
+  content_type: text/plain; charset=utf-8
+  meaning: No or invalid personal access token.
+  remediation: >-
+    Send `Authorization: Bearer <personal access token>`; obtain the token from your
+    profile page on your own Woodpecker server.
+  probed: '2026-08-27'
+- status: 401
+  path: /api/repos/999999999
+  body: ''
+  content_length: 0
+  meaning: >-
+    Authentication is checked before the resource is resolved, so an unauthenticated
+    request for a non-existent repository returns 401 with an EMPTY body rather than 404.
+    An agent cannot distinguish "not authorized" from "does not exist" here.
+  probed: '2026-08-27'
+- status: 500
+  path: /api/orgs/lookup/woodpecker-ci
+  body: ''
+  content_length: 0
+  meaning: >-
+    Unauthenticated org lookup returns a bare 500 with no body. No diagnostic information
+    is returned to the caller.
+  probed: '2026-08-27'
+- status: 404
+  path: /api/badges/1/status.svg
+  meaning: Badge requested for a repository id that does not exist on this server.
+  probed: '2026-08-27'
+gaps:
+- >-
+  118 operations, 1 declared error response. No 400, 401, 403, 404, 409 or 422 is declared
+  anywhere in the spec, so a generated client has no typed error path at all.
+- >-
+  No error code, error id or error type is emitted, so failures cannot be branched on
+  programmatically beyond the status code.
+- >-
+  Some failures return an empty body, which is indistinguishable from a network-level
+  truncation.
+- >-
+  Authorization is evaluated before existence, collapsing 404 into 401 for unauthenticated
+  callers.

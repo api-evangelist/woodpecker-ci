@@ -1,0 +1,125 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/docs/cli
+name: woodpecker-cli
+description: >-
+  First-party command line client for a Woodpecker CI server. Wraps the same REST API
+  documented at https://woodpecker-ci.org/api, plus a local pipeline execution mode that
+  runs workflow files without a server at all.
+version: 3.18.0
+version_source: https://github.com/woodpecker-ci/woodpecker/releases/tag/v3.18.0
+license: Apache-2.0
+install:
+- method: deb
+  detail: >-
+    woodpecker-cli_<version>_amd64.deb / _arm64.deb from the GitHub release page.
+  docs: https://woodpecker-ci.org/docs/administration/installation/packages
+- method: rpm
+  detail: woodpecker-cli-<version>-1.x86_64.rpm from the GitHub release page.
+- method: tarball
+  detail: >-
+    woodpecker-cli_{linux,darwin,freebsd,openbsd}_{amd64,arm64,arm,riscv64}.tar.gz and
+    woodpecker-cli_windows_amd64.zip attached to each release.
+- method: container
+  detail: docker run --rm woodpeckerci/woodpecker-cli
+  registry: https://hub.docker.com/r/woodpeckerci/woodpecker-cli
+- method: homebrew
+  detail: Community-maintained Homebrew formula (CLI only). Not maintained by the project.
+  official: false
+configuration:
+  contexts_file: contexts.json
+  paths:
+    linux: ~/.config/woodpecker/contexts.json
+    macos: ~/Library/Application Support/woodpecker/contexts.json
+    windows: C:\Users\<user>\AppData\Local\woodpecker\contexts.json
+  xdg_override: XDG_CONFIG_HOME
+  legacy_file: config.json (used only when no usable current context can be loaded)
+  token_storage: >-
+    Authentication tokens are NEVER written to the JSON file. They are stored in the
+    operating system keyring and looked up by server URL.
+  precedence: >-
+    Command-line flags beat environment variables, and either beats a stored context or
+    legacy value.
+  env_vars:
+  - flag: --server / -s
+    env: WOODPECKER_SERVER
+  - flag: --token / -t
+    env: WOODPECKER_TOKEN
+  - flag: --log-level
+    env: WOODPECKER_LOG_LEVEL
+  - flag: --config / -c
+    env: WOODPECKER_CONFIG
+    note: Selects the LEGACY config file only; it does not select a context.
+global_flags:
+- --config, -c
+- --disable-update-check
+- --log-file
+- --log-level
+- --nocolor
+- --pretty
+- --server, -s
+- --skip-verify
+- --socks-proxy
+- --socks-proxy-off
+- --token, -t
+commands:
+- group: admin
+  summary: manage server settings
+  subcommands:
+  - log-level (retrieve or set the server log level)
+- group: context, ctx
+  summary: manage named server contexts
+  subcommands: [list/ls, use, delete/rm, rename]
+- group: exec
+  summary: execute a local pipeline without a server
+  note: >-
+    Supports --backend-engine docker|local, --pipeline-event, --commit-branch,
+    --commit-sha, --repo, --metadata-file, --env, --secrets and --secrets-file.
+  docs: https://woodpecker-ci.org/docs/usage/local-execution
+- group: info
+  summary: show information about the current user/server
+- group: lint
+  summary: lint a pipeline configuration file against the published JSON Schema
+- group: org
+  summary: manage organizations
+  subcommands: [ls, registry (add/rm/ls/show/update), secret (add/rm/ls/show/update)]
+- group: pipeline
+  summary: manage pipelines
+  subcommands: [approve, create, decline, deploy, last, ls, log (show/purge), ps, purge, queue, show, start, stop]
+- group: registry
+  summary: manage global registries
+  subcommands: [add, rm, ls, show, update]
+- group: repo
+  summary: manage repositories
+  subcommands: [add, chown, cron (add/rm/ls/show/update), ls, registry (add/rm/ls/show/update), rm, repair, secret (add/rm/ls/show/update), show, sync, update]
+- group: secret
+  summary: manage global secrets
+  subcommands: [add, rm, ls, show, update]
+- group: setup
+  summary: set up the CLI against a server (interactive login)
+- group: update
+  summary: update the CLI binary in place
+- group: user
+  summary: manage users
+  subcommands: [add, ls, rm, show]
+key_flows:
+- name: Connect to a server
+  steps:
+  - woodpecker-cli setup
+  - woodpecker-cli context use <name>
+  - woodpecker-cli info
+- name: Trigger and follow a pipeline
+  steps:
+  - woodpecker-cli pipeline create <repo>
+  - woodpecker-cli pipeline last <repo>
+  - woodpecker-cli pipeline log show <repo> <number>
+- name: Approve a blocked pipeline
+  steps:
+  - woodpecker-cli pipeline approve <repo> <number>
+  - woodpecker-cli pipeline decline <repo> <number>   # the reversal
+- name: Rehearse a workflow change locally
+  steps:
+  - woodpecker-cli lint .woodpecker/my-workflow.yaml
+  - woodpecker-cli exec --backend-engine docker .woodpecker/my-workflow.yaml
+deprecated_flags:
+- --format on several ls/show subcommands is marked "(deprecated)" in the generated reference.

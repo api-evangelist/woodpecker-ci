@@ -1,0 +1,44 @@
+generated: '2026-08-27'
+method: generated
+source: openapi/woodpecker-ci-server-swagger.json, conventions/woodpecker-ci-conventions.yml, data-model/woodpecker-ci-data-model.yml
+provider_published_skills: none
+provider_published_note: >-
+  No AGENTS.md, no skills/ directory and no agent instructions were found in the
+  woodpecker-ci GitHub organization or on woodpecker-ci.org. These skills are authored by
+  API Evangelist and grounded in the provider's published Swagger 2.0 contract; every
+  operation named in them exists in openapi/woodpecker-ci-server-swagger.json.
+operation_id_caveat: >-
+  The provider's spec declares NO operationIds for any of its 118 operations, so the skills
+  identify operations by method+path — which is what the contract actually contains — and
+  reference the operationIds added by overlays/woodpecker-ci-server-swagger-overlay.yaml only
+  as comments.
+skills:
+- name: woodpecker-ci-trigger-and-follow-a-pipeline
+  file: woodpecker-ci-trigger-and-follow-a-pipeline.md
+  summary: >-
+    Resolve a repository by full name, trigger a manual pipeline, follow it to completion,
+    and cancel it if it should not have run.
+  writes: true
+  reversible: 'yes — POST .../cancel while pending or running'
+- name: woodpecker-ci-approve-or-decline-a-blocked-pipeline
+  file: woodpecker-ci-approve-or-decline-a-blocked-pipeline.md
+  summary: >-
+    Review a pipeline held for approval (typically a fork pull request), read the workflow
+    file that would execute, and approve or decline it.
+  writes: true
+  security_sensitive: true
+  reversible: 'decline reverses a pending approval; after approval only cancel remains'
+- name: woodpecker-ci-debug-a-failed-pipeline
+  file: woodpecker-ci-debug-a-failed-pipeline.md
+  summary: >-
+    Walk pipeline to workflow to step, pull the failing step's logs, read the resolved
+    configuration and metadata, and reproduce locally before re-running.
+  writes: false
+excluded_deliberately:
+- surface: secrets and registries
+  reason: >-
+    The Secret definition exposes `value` and the Registry definition exposes `password`.
+    No skill is authored over those endpoints; an agent operating them is a
+    credential-exfiltration path.
+- surface: user, agent and forge administration
+  reason: Server-wide destructive operations with no restore path.

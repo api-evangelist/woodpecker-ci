@@ -1,0 +1,81 @@
+generated: '2026-08-27'
+method: probed
+source: live HTTP probes of every apis.yml + OpenAPI servers[] host, 2026-08-27
+note: >-
+  Nothing was found. woodpecker-ci.org (Docusaurus) returns a real 404 for every
+  /.well-known/ path. ci.woodpecker-ci.org is the Woodpecker web UI, a single-page
+  app whose server answers 200 with the SPA HTML shell for every unmatched path —
+  those 200s are NOT documents and are recorded as misses. No WellKnown or SecurityTxt
+  pointer is emitted, because the provider does not serve one. Woodpecker does publish
+  a vulnerability disclosure policy, but as SECURITY.md on GitHub rather than as
+  /.well-known/security.txt — see security/woodpecker-ci-vulnerability-disclosure.yml.
+hosts:
+- host: woodpecker-ci.org
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: ci.woodpecker-ci.org
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    result: miss
+    note: 200 returned the Woodpecker web UI SPA shell (text/html), not a security.txt.
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not an OpenID Provider Metadata document.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not RFC 8414 metadata.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not RFC 9728 metadata.
+  - path: /.well-known/api-catalog
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not an RFC 9727 API catalog.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not a plugin manifest.
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not an A2A AgentCard.
+  - path: /.well-known/agent.json
+    status: 200
+    file: null
+    result: miss
+    note: SPA catch-all HTML, not a legacy A2A AgentCard.
+documents_found: 0

@@ -1,0 +1,143 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/awesome, https://github.com/woodpecker-ci (org repo listing), npm registry search
+status: candidate
+official_server: none
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+summary: >-
+  Woodpecker CI does not ship an MCP server. There is no repository named for MCP in the
+  woodpecker-ci GitHub organization, no hosted MCP endpoint, and no MCP page in the docs.
+  The project DOES link one community server from its own Awesome page, and several more
+  exist on GitHub and npm; none of them is published by the project, so no MCPServer
+  pointer is wired into apis.yml. Emitting one would assert that the provider serves an
+  agent surface it does not serve.
+searched:
+- source: https://woodpecker-ci.org/awesome
+  status: 200
+  result: >-
+    Lists "Woodpecker MCP" (https://github.com/j04n-f/woodpecker-mcp) under community
+    tooling. Referenced by the project, authored by a third party.
+  checked: '2026-08-27'
+- source: https://api.github.com/orgs/woodpecker-ci/repos
+  status: 200
+  result: 27 repositories, none MCP-related.
+  checked: '2026-08-27'
+- source: https://registry.npmjs.org/-/v1/search?text=woodpecker-ci
+  status: 200
+  result: >-
+    Only third-party MCP packages — woodpecker-ci-mcp (aman-11),
+    @devpuccino/mcp-woodpecker, @iflow-mcp/j04n-f-woodpecker-mcp. Nothing under the
+    project's own @woodpecker-ci scope.
+  checked: '2026-08-27'
+community_servers:
+- name: Woodpecker MCP
+  repository: https://github.com/j04n-f/woodpecker-mcp
+  official: false
+  listed_by_project: https://woodpecker-ci.org/awesome
+  deployment:
+    mode: local-stdio
+    endpoint: null
+    install: 'docker run -i --rm -e WOODPECKER_TOKEN -e WOODPECKER_URL ghcr.io/j04n-f/woodpecker-mcp'
+    alternative_install: 'woodpecker-mcp (standalone binary)'
+    package: https://github.com/j04n-f/woodpecker-mcp/pkgs/container/woodpecker-mcp
+    auth: api-key
+    auth_detail: >-
+      WOODPECKER_TOKEN (a Woodpecker personal access token) plus WOODPECKER_URL pointing at
+      the operator's own server. It is stdio only — an agent cannot reach it without a
+      human installing and running it first.
+    verified: searched
+  tools_published:
+  - name: search_repository
+    description: Find repository by name
+    parameters: [name]
+  - name: list_repositories
+    description: List all repositories
+    parameters: [page, perPage, active, trusted]
+  - name: list_pipelines
+    description: List repository pipelines
+    parameters: [repoId, before, after, page, perPage]
+  - name: get_pipeline
+    description: Get detailed pipeline info
+    parameters: [repoId, number]
+  - name: get_pipeline_config
+    description: View pipeline configuration
+    parameters: [repoId, number]
+  - name: get_step_logs
+    description: Get logs for debugging
+    parameters: [repoId, number, stepId]
+  prompts_published:
+  - name: review-pipeline-error
+    description: Systematic analysis of pipeline failures
+  source: https://raw.githubusercontent.com/j04n-f/woodpecker-mcp/main/README.md
+  scope_note: >-
+    Read-only. It covers repository lookup, pipeline listing/detail, pipeline config and
+    step logs — the debugging slice — and exposes none of the write surface (trigger,
+    approve, cancel, secrets, registries, crons, agents).
+- name: Other third-party servers seen
+  official: false
+  note: >-
+    denysvitali/woodpecker-ci-mcp, aman-11/woodpecker-mcp-server, rtuszik/woodpecker-mcp,
+    RikiGomes/woodpecker-mcp (read-only), KalvadTech/woodpecker-mcp (stateless),
+    berryj85/mcp-woodpecker. None is published by the project; none is catalogued in detail
+    here. Recorded only to show the shape of the ecosystem.
+candidate_tools:
+  method: derived
+  source: openapi/woodpecker-ci-server-swagger.json
+  note: >-
+    What a first-party MCP server would most plausibly expose, derived from the real
+    operations in the published Swagger document. These are CANDIDATES — nobody serves
+    them. The Swagger document declares no operationIds, so each tool is bound to its
+    method+path instead.
+  tools:
+  - name: list_repositories
+    rest: GET /repos
+  - name: lookup_repository
+    rest: GET /repos/lookup/{repo_full_name}
+  - name: get_repository
+    rest: GET /repos/{repo_id}
+  - name: list_pipelines
+    rest: GET /repos/{repo_id}/pipelines
+  - name: get_pipeline
+    rest: GET /repos/{repo_id}/pipelines/{pipeline_number}
+  - name: get_pipeline_config
+    rest: GET /repos/{repo_id}/pipelines/{pipeline_number}/config
+  - name: get_pipeline_metadata
+    rest: GET /repos/{repo_id}/pipelines/{pipeline_number}/metadata
+  - name: get_step_logs
+    rest: GET /repos/{repo_id}/logs/{pipeline_number}/{step_id}
+  - name: trigger_pipeline
+    rest: POST /repos/{repo_id}/pipelines
+    write: true
+  - name: restart_pipeline
+    rest: POST /repos/{repo_id}/pipelines/{pipeline_number}
+    write: true
+  - name: cancel_pipeline
+    rest: POST /repos/{repo_id}/pipelines/{pipeline_number}/cancel
+    write: true
+  - name: approve_pipeline
+    rest: POST /repos/{repo_id}/pipelines/{pipeline_number}/approve
+    write: true
+  - name: decline_pipeline
+    rest: POST /repos/{repo_id}/pipelines/{pipeline_number}/decline
+    write: true
+  - name: list_cron_jobs
+    rest: GET /repos/{repo_id}/cron
+  - name: list_secrets
+    rest: GET /repos/{repo_id}/secrets
+    caution: >-
+      The Secret definition carries a `value` field. Any MCP tool over the secret surface
+      must be treated as a credential-exfiltration path and should be omitted or masked.
+  - name: list_agents
+    rest: GET /agents
+  - name: get_queue_info
+    rest: GET /queue/info
+  - name: get_user_feed
+    rest: GET /user/feed
+  - name: get_version
+    rest: GET /version

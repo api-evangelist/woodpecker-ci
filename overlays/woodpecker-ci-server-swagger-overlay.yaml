@@ -1,0 +1,668 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Woodpecker CI Server API
+  version: 1.0.0
+extends: openapi/woodpecker-ci-server-swagger.json
+x-generated: '2026-08-27'
+x-method: generated
+x-source: openapi/woodpecker-ci-server-swagger.json (Swagger 2.0, fetched from https://ci.woodpecker-ci.org/swagger/doc.json
+  on 2026-08-27)
+x-note: These are API Evangelist ADDITIONS layered over the provider spec; the original in openapi/ is
+  never mutated. Nothing here changes behaviour or invents an endpoint — it declares the credential the
+  operations already require, names the operations the spec left unnamed, and links the project docs.
+  operationIds are derived deterministically from each operation summary; they are ours, not the provider's.
+actions:
+- target: $
+  description: Declare the personal-access-token bearer credential as a reusable Swagger 2.0 security
+    definition. The published spec expresses it only as a required Authorization header parameter on 110
+    of 118 operations, so generated clients get no auth model at all.
+  update:
+    securityDefinitions:
+      PersonalAccessToken:
+        type: apiKey
+        name: Authorization
+        in: header
+        description: Woodpecker personal access token, sent as "Bearer <personal access token>". Obtain
+          it from your profile page on your own Woodpecker server.
+- target: $
+  description: Apply the credential globally. Individual unauthenticated operations (/version, /healthz,
+    /signature/public-key, the badge endpoints and /hook) override it with an empty security requirement.
+  update:
+    security:
+    - PersonalAccessToken: []
+- target: $.info
+  description: Add the project contact email and a link to the rendered API reference.
+  update:
+    contact:
+      name: Woodpecker CI
+      url: https://woodpecker-ci.org/
+      email: security@woodpecker-ci.org
+    license:
+      name: Apache-2.0
+      url: https://github.com/woodpecker-ci/woodpecker/blob/main/LICENSE
+- target: $
+  description: Point at the rendered reference and the deprecation policy.
+  update:
+    externalDocs:
+      description: Woodpecker CI API reference and documentation
+      url: https://woodpecker-ci.org/api
+- target: $.paths['/agents'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listAgents
+- target: $.paths['/agents'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createANewAgent
+- target: $.paths['/agents/{agent_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAnAgent
+- target: $.paths['/agents/{agent_id}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAnAgent
+- target: $.paths['/agents/{agent_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAnAgent
+- target: $.paths['/agents/{agent_id}/tasks'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listAgentTasks
+- target: $.paths['/badges/{repo_id}/cc.xml'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: providePipelineStatusInformationToTheCCMenuTool
+- target: $.paths['/badges/{repo_id}/status.svg'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getStatusOfPipelineAsSVGBadge
+- target: $.paths['/debug/pprof'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listAvailablePprofProfilesHTML
+- target: $.paths['/debug/pprof/block'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofStackTracesThatLedToBlockingOnSynchronizationPrimitives
+- target: $.paths['/debug/pprof/cmdline'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getTheCommandLineInvocationOfTheCurrentProgram
+- target: $.paths['/debug/pprof/goroutine'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofStackTracesOfAllCurrentGoroutines
+- target: $.paths['/debug/pprof/heap'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofHeapDumpASamplingOfMemoryAllocationsOfLiveObjects
+- target: $.paths['/debug/pprof/profile'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofCPUProfile
+- target: $.paths['/debug/pprof/symbol'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofProgramCountersMappingToFunctionNames
+- target: $.paths['/debug/pprof/symbol'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofProgramCountersMappingToFunctionNames2
+- target: $.paths['/debug/pprof/threadcreate'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPprofStackTracesThatLedToTheCreationOfNewOSThreads
+- target: $.paths['/debug/pprof/trace'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getATraceOfExecutionOfTheCurrentProgram
+- target: $.paths['/forges'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listForges
+- target: $.paths['/forges'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createANewForge
+- target: $.paths['/forges/{forge_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAForge
+- target: $.paths['/forges/{forge_id}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAForge
+- target: $.paths['/forges/{forge_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAForge
+- target: $.paths['/healthz'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: healthInformation
+- target: $.paths['/hook'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: incomingWebhookFromForge
+- target: $.paths['/log-level'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: currentLogLevel
+- target: $.paths['/log-level'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: setLogLevel
+- target: $.paths['/orgs'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listOrganizations
+- target: $.paths['/orgs/lookup/{org_full_name}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: lookupAnOrganizationByFullName
+- target: $.paths['/orgs/{org_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAnOrganization
+- target: $.paths['/orgs/{org_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAnOrganization
+- target: $.paths['/orgs/{org_id}/agents'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listAgentsForAnOrganization
+- target: $.paths['/orgs/{org_id}/agents'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createANewOrganizationScopedAgent
+- target: $.paths['/orgs/{org_id}/agents/{agent_id}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAnOrganizationScopedAgent
+- target: $.paths['/orgs/{org_id}/agents/{agent_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAnOrganizationScopedAgent
+- target: $.paths['/orgs/{org_id}/permissions'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getThePermissionsOfTheCurrentlyAuthenticatedUserForTheGivenOrganization
+- target: $.paths['/orgs/{org_id}/registries'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listOrganizationRegistries
+- target: $.paths['/orgs/{org_id}/registries'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createAnOrganizationRegistry
+- target: $.paths['/orgs/{org_id}/registries/{registry}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAOrganizationRegistryByAddress
+- target: $.paths['/orgs/{org_id}/registries/{registry}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAnOrganizationRegistryByName
+- target: $.paths['/orgs/{org_id}/registries/{registry}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAnOrganizationRegistryByName
+- target: $.paths['/orgs/{org_id}/secrets'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listOrganizationSecrets
+- target: $.paths['/orgs/{org_id}/secrets'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createAnOrganizationSecret
+- target: $.paths['/orgs/{org_id}/secrets/{secret}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAOrganizationSecretByName
+- target: $.paths['/orgs/{org_id}/secrets/{secret}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAnOrganizationSecretByName
+- target: $.paths['/orgs/{org_id}/secrets/{secret}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAnOrganizationSecretByName
+- target: $.paths['/pipelines'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listPipelinesInQueue
+- target: $.paths['/queue/info'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getPipelineQueueInformation
+- target: $.paths['/queue/norunningpipelines'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: blockTilPipelineQueueHasARunningItem
+- target: $.paths['/queue/pause'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: pauseThePipelineQueue
+- target: $.paths['/queue/resume'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: resumeThePipelineQueue
+- target: $.paths['/registries'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listGlobalRegistries
+- target: $.paths['/registries'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createAGlobalRegistry
+- target: $.paths['/registries/{registry}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAGlobalRegistryByName
+- target: $.paths['/registries/{registry}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAGlobalRegistryByName
+- target: $.paths['/registries/{registry}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAGlobalRegistryByName
+- target: $.paths['/repos'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listAllRepositoriesOnTheServer
+- target: $.paths['/repos'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: activateARepository
+- target: $.paths['/repos/lookup/{repo_full_name}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: lookupARepositoryByFullName
+- target: $.paths['/repos/repair'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: repairAllRepositoriesOnTheServer
+- target: $.paths['/repos/{repo_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getARepository
+- target: $.paths['/repos/{repo_id}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateARepository
+- target: $.paths['/repos/{repo_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteARepository
+- target: $.paths['/repos/{repo_id}/branches'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getBranchesOfARepository
+- target: $.paths['/repos/{repo_id}/chown'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: changeARepositorySOwnerToTheCurrentlyAuthenticatedUser
+- target: $.paths['/repos/{repo_id}/cron'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listCronJobs
+- target: $.paths['/repos/{repo_id}/cron'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createACronJob
+- target: $.paths['/repos/{repo_id}/cron/{cron}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getACronJob
+- target: $.paths['/repos/{repo_id}/cron/{cron}'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: startACronJobNow
+- target: $.paths['/repos/{repo_id}/cron/{cron}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateACronJob
+- target: $.paths['/repos/{repo_id}/cron/{cron}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteACronJob
+- target: $.paths['/repos/{repo_id}/logs/{pipeline_number}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deletesAllLogsOfAPipeline
+- target: $.paths['/repos/{repo_id}/logs/{pipeline_number}/{step_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getLogsForAPipelineStep
+- target: $.paths['/repos/{repo_id}/logs/{pipeline_number}/{step_id}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteStepLogsOfAPipeline
+- target: $.paths['/repos/{repo_id}/logs/{pipeline_number}/{step_id}/download'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: downloadLogsForAPipelineStep
+- target: $.paths['/repos/{repo_id}/move'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: moveARepositoryToANewOwner
+- target: $.paths['/repos/{repo_id}/permissions'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: checkCurrentAuthenticatedUsersAccessToTheRepository
+- target: $.paths['/repos/{repo_id}/pipelines'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listRepositoryPipelines
+- target: $.paths['/repos/{repo_id}/pipelines'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: triggerAManualPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getARepositoriesPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: restartAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}/approve'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: approveAndStartAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}/cancel'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: cancelAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}/config'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getConfigurationFilesForAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}/decline'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: declineAPipeline
+- target: $.paths['/repos/{repo_id}/pipelines/{pipeline_number}/metadata'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getMetadataForAPipelineOrASpecificWorkflowIncludingPreviousPipelineInfo
+- target: $.paths['/repos/{repo_id}/pull_requests'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listActivePullRequestsOfARepository
+- target: $.paths['/repos/{repo_id}/registries'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listRegistries
+- target: $.paths['/repos/{repo_id}/registries'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createARegistry
+- target: $.paths['/repos/{repo_id}/registries/{registry}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getARegistryByName
+- target: $.paths['/repos/{repo_id}/registries/{registry}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateARegistryByName
+- target: $.paths['/repos/{repo_id}/registries/{registry}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteARegistryByName
+- target: $.paths['/repos/{repo_id}/repair'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: repairARepository
+- target: $.paths['/repos/{repo_id}/secrets'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listRepositorySecrets
+- target: $.paths['/repos/{repo_id}/secrets'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createARepositorySecret
+- target: $.paths['/repos/{repo_id}/secrets/{secretName}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getARepositorySecretByName
+- target: $.paths['/repos/{repo_id}/secrets/{secretName}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateARepositorySecretByName
+- target: $.paths['/repos/{repo_id}/secrets/{secretName}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteARepositorySecretByName
+- target: $.paths['/secrets'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listGlobalSecrets
+- target: $.paths['/secrets'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createAGlobalSecret
+- target: $.paths['/secrets/{secret}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAGlobalSecretByName
+- target: $.paths['/secrets/{secret}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAGlobalSecretByName
+- target: $.paths['/secrets/{secret}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAGlobalSecretByName
+- target: $.paths['/signature/public-key'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getServerSSignaturePublicKey
+- target: $.paths['/stream/events'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: streamEventsLikePipelineUpdates
+- target: $.paths['/stream/logs/{repo_id}/{pipeline}/{step_id}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: streamLogsOfAPipelineStep
+- target: $.paths['/user'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getTheCurrentlyAuthenticatedUser
+- target: $.paths['/user/feed'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getTheCurrentlyAuthenticatedUsersPipelineFeed
+- target: $.paths['/user/repos'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getUserSRepositories
+- target: $.paths['/user/token'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: returnTheTokenOfTheCurrentUserAsString
+- target: $.paths['/user/token'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: resetAToken
+- target: $.paths['/users'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: listUsers
+- target: $.paths['/users'].post
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: createAUser
+- target: $.paths['/users/{login}'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getAUser
+- target: $.paths['/users/{login}'].patch
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: updateAUser
+- target: $.paths['/users/{login}'].delete
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: deleteAUser
+- target: $.paths['/version'].get
+  description: Add a unique operationId. The published spec declares none for any of its 118 operations,
+    so every generated client invents its own method names.
+  update:
+    operationId: getVersion
+- target: $.paths['/version'].get
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []
+- target: $.paths['/healthz'].get
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []
+- target: $.paths['/signature/public-key'].get
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []
+- target: $.paths['/badges/{repo_id}/status.svg'].get
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []
+- target: $.paths['/badges/{repo_id}/cc.xml'].get
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []
+- target: $.paths['/hook'].post
+  description: Mark this operation as unauthenticated; it declares no Authorization header parameter in
+    the published spec.
+  update:
+    security: []

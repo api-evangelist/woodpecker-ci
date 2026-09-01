@@ -1,0 +1,130 @@
+generated: '2026-08-27'
+method: derived
+source: >-
+  https://raw.githubusercontent.com/j04n-f/woodpecker-mcp/main/README.md (published tool
+  table) bound to openapi/woodpecker-ci-server-swagger.json
+scope_note: >-
+  Woodpecker publishes no MCP server of its own. This crosswalk binds the tools of the ONE
+  community server the project links from its own Awesome page
+  (https://github.com/j04n-f/woodpecker-mcp) to the REST operations they must be calling,
+  so the divergence between the agent surface people actually use and the API the project
+  actually ships is recorded rather than assumed. It does not assert that Woodpecker ships
+  an MCP server.
+surfaces:
+  openapi:
+    file: openapi/woodpecker-ci-server-swagger.json
+    version: swagger 2.0
+    operations: 118
+    gated: false
+    note: >-
+      Served publicly at https://ci.woodpecker-ci.org/swagger/doc.json and rendered at
+      https://woodpecker-ci.org/api. NO operationIds are declared, so every binding below
+      is by method+path.
+  graphql:
+    present: false
+  mcp:
+    url: null
+    transport: stdio
+    gated: true
+    gated_note: >-
+      Local stdio only. The live tool schemas could not be introspected because the server
+      must be installed and run by a human against an operator's own Woodpecker instance
+      with a personal access token. Bindings below are therefore mapped from the server's
+      PUBLISHED tool table by name and parameters, not from a tools/list response.
+crosswalk:
+- tool: search_repository
+  category: discovery
+  rest: ['GET /repos/lookup/{repo_full_name}']
+  binding: direct
+  confidence: high
+  note: >-
+    Tool parameter `name` is documented as "owner/repo", which is exactly the
+    repo_full_name path parameter on the lookup operation.
+- tool: list_repositories
+  category: discovery
+  rest: ['GET /repos']
+  binding: direct
+  confidence: high
+  note: >-
+    Tool parameters page/perPage match the spec's pagination parameters verbatim. The
+    tool's `active` and `trusted` filters correspond to Repo.active / Repo.trusted, which
+    the REST operation does not expose as query parameters — the tool is almost certainly
+    filtering client-side.
+- tool: list_pipelines
+  category: read
+  rest: ['GET /repos/{repo_id}/pipelines']
+  binding: direct
+  confidence: high
+  note: Tool `repoId` maps to the repo_id path parameter; page/perPage map to the spec's.
+- tool: get_pipeline
+  category: read
+  rest: ['GET /repos/{repo_id}/pipelines/{pipeline_number}']
+  binding: direct
+  confidence: high
+- tool: get_pipeline_config
+  category: read
+  rest: ['GET /repos/{repo_id}/pipelines/{pipeline_number}/config']
+  binding: direct
+  confidence: high
+- tool: get_step_logs
+  category: read
+  rest: ['GET /repos/{repo_id}/logs/{pipeline_number}/{step_id}']
+  binding: direct
+  confidence: high
+  note: >-
+    Could alternatively be backed by GET /stream/logs/{repo_id}/{pipeline}/{step_id}, but a
+    tool returning a value rather than a stream implies the non-streaming operation.
+mcp_only: []
+mcp_only_note: >-
+  Every published tool binds to a real REST operation. The community server adds no
+  composite or MCP-native capability; it adds one prompt (`review-pipeline-error`), which is
+  a prompt rather than a tool and has no REST counterpart by construction.
+rest_only:
+  count: 112
+  note: >-
+    112 of the 118 REST operations have no tool. The gap is not incidental — it is the
+    entire write surface and the entire administrative surface.
+  categories:
+  - name: Pipeline control (write)
+    operations:
+    - 'POST /repos/{repo_id}/pipelines — Trigger a manual pipeline'
+    - 'POST /repos/{repo_id}/pipelines/{pipeline_number} — Restart a pipeline'
+    - 'POST /repos/{repo_id}/pipelines/{pipeline_number}/approve'
+    - 'POST /repos/{repo_id}/pipelines/{pipeline_number}/decline'
+    - 'POST /repos/{repo_id}/pipelines/{pipeline_number}/cancel'
+    - 'DELETE /repos/{repo_id}/pipelines/{pipeline_number}'
+  - name: Secrets and registries (all three scopes)
+    operations:
+    - 'GET|POST /secrets, /orgs/{org_id}/secrets, /repos/{repo_id}/secrets and their item operations'
+    - 'GET|POST /registries, /orgs/{org_id}/registries, /repos/{repo_id}/registries and their item operations'
+    note: >-
+      Deliberately absent from the agent surface, and rightly so — Secret carries a `value`
+      field and Registry carries a `password` field.
+  - name: Repository administration
+    operations:
+    - 'POST /repos — Activate a repository'
+    - 'PATCH|DELETE /repos/{repo_id}'
+    - 'POST /repos/{repo_id}/repair, /repos/repair, /repos/{repo_id}/chown, /repos/{repo_id}/move'
+  - name: Cron jobs
+    operations: ['GET|POST /repos/{repo_id}/cron', 'GET|POST|PATCH|DELETE /repos/{repo_id}/cron/{cron}']
+  - name: Agents, forges, users, orgs
+    operations:
+    - '/agents and /orgs/{org_id}/agents (list, create, update, delete)'
+    - '/forges and /forges/{forge_id}'
+    - '/users and /users/{login}'
+    - '/orgs, /orgs/{org_id}, /orgs/lookup/{org_full_name}'
+  - name: Queue administration
+    operations: ['GET /queue/info', 'POST /queue/pause', 'POST /queue/resume', 'GET /queue/norunningpipelines', 'GET /pipelines']
+  - name: Streaming
+    operations: ['GET /stream/events', 'GET /stream/logs/{repo_id}/{pipeline}/{step_id}']
+    note: SSE streams have no natural MCP tool shape.
+  - name: System, badges and profiling
+    operations: ['/version', '/healthz', '/log-level', '/signature/public-key', '/badges/*', '/debug/pprof/*']
+coverage:
+  rest_operations: 118
+  mcp_tools: 6
+  bound: 6
+  mcp_only: 0
+  rest_only: 112
+  rest_coverage_pct: 5.1
+  binding_confidence: 'high on all 6; none verified against a live tools/list response'

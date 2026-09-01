@@ -1,0 +1,194 @@
+generated: '2026-08-27'
+method: searched
+source: https://woodpecker-ci.org/api, https://woodpecker-ci.org/docs/development/openapi, https://woodpecker-ci.org/docs/development/deprecations
+derived_from: openapi/woodpecker-ci-server-swagger.json
+observed_on: https://ci.woodpecker-ci.org/api (live unauthenticated probes, 2026-08-27)
+auth:
+  style: bearer
+  header: Authorization
+  value_format: 'Bearer <personal access token>'
+  declared_in_spec: false
+  note: >-
+    Declared as a required header parameter on 110 of 118 operations rather than as a
+    securityDefinitions scheme. See authentication/woodpecker-ci-authentication.yml.
+base_path:
+  declared: /api
+  note: >-
+    The Swagger document declares basePath /api, but the System endpoints /healthz and
+    /version are actually served at the server root — https://ci.woodpecker-ci.org/version
+    returns JSON while https://ci.woodpecker-ci.org/api/version falls through to the web
+    UI SPA. Verified live 2026-08-27. Clients generated straight from the spec will call
+    the wrong path for those two operations.
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No Idempotency-Key header, no idempotency section in the docs, and no occurrence of
+    "idempoten" anywhere in the published Swagger document. Retrying POST /repos/{repo_id}/pipelines
+    creates another pipeline. Recorded as absent — no Idempotency pointer is emitted.
+pagination:
+  style: page-number
+  params:
+  - name: page
+    in: query
+    type: integer
+    default: 1
+    description: for response pagination, page offset number
+  - name: perPage
+    in: query
+    type: integer
+    default: 50
+    description: for response pagination, max items per page
+  operations_supporting: 16
+  response_envelope: none
+  note: >-
+    Collections are returned as bare JSON arrays; there is no wrapper object, no total
+    count and no next/prev link. A client cannot tell the last page from a full page
+    except by requesting the next one and getting an empty array. The convention is
+    documented as a project guideline at
+    https://woodpecker-ci.org/docs/development/openapi ("when pagination is used,
+    @Param page and @Param perPage must be added manually").
+filtering:
+  note: >-
+    Ad hoc per endpoint. Examples in the spec include `forge_remote_id` on repository
+    lookups and `seconds` on log-streaming endpoints. No general filter/sort grammar.
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+  note: >-
+    No arbitrary key/value metadata field on resources. Pipeline-scoped metadata exists
+    as a read-only computed document at GET /repos/{repo_id}/pipelines/{pipeline_number}/metadata.
+request_id_tracing:
+  supported: false
+  note: >-
+    No request-id or correlation header observed on live responses. Responses do carry
+    `X-Woodpecker-Version` (e.g. next-a4cb541b82), which identifies the server build and
+    is the only server-side runtime signal returned.
+versioning:
+  style: semver-release
+  in_url: false
+  header: null
+  current: 3.18.0
+  note: >-
+    The API is not URL- or header-versioned. It is versioned with the product: the
+    Swagger `info.version` reports the running server build, and breaking changes are
+    gated by the project's major-release deprecation process. Because the software is
+    self-hosted, the API version a client meets is whatever version the operator has
+    installed, which can be any supported release.
+  deprecation_policy: https://woodpecker-ci.org/docs/development/deprecations
+error_envelope:
+  format: plain-text
+  content_type: text/plain; charset=utf-8
+  rfc9457: false
+  shape: >-
+    A bare human-readable string, e.g. `User not authorized` on 401. Some failures return
+    an empty body with only the status code (observed: 401 on /api/repos/{id} and 500 on
+    /api/orgs/lookup/{name} both returned content-length 0).
+  machine_readable: false
+  note: >-
+    There is no error code, no error object and no problem+json. An agent can act on the
+    HTTP status and nothing else. See errors/woodpecker-ci-problem-types.yml.
+rate_limit_signaling:
+  headers: []
+  status_on_exhaustion: null
+  note: >-
+    No X-RateLimit-*, no RateLimit-*, no Retry-After on any observed response, and no
+    published limits. See rate-limits/woodpecker-ci-rate-limits.yml.
+content_types:
+  request: application/json
+  response:
+  - application/json
+  - text/plain
+  - text/event-stream
+  - image/svg+xml
+  - text/xml
+streaming:
+  protocol: Server-Sent Events
+  endpoints:
+  - GET /stream/events
+  - GET /stream/logs/{repo_id}/{pipeline}/{step_id}
+cors:
+  observed: 'access-control-allow-origin: *'
+security_headers_observed:
+- 'x-content-type-options: nosniff'
+- 'x-frame-options: DENY'
+- 'x-xss-protection: 1; mode=block'
+reversibility:
+  applicable: true
+  grade: documented
+  grade_basis: >-
+    Reversal operations exist and are named in the contract, but the project publishes no
+    time window for any of them, so this grades `documented` (0.4) and not `verified`.
+    No window is asserted here that the docs do not state.
+  write_surfaces:
+  - surface: Pipeline execution
+    write_operation: POST /repos/{repo_id}/pipelines
+    operation_id: null
+    reversal: POST /repos/{repo_id}/pipelines/{pipeline_number}/cancel
+    reversal_summary: Cancel a pipeline
+    window: null
+    window_note: >-
+      Constrained by pipeline STATE, not by elapsed time: a pipeline can be cancelled
+      while it is pending or running. The docs state no duration.
+    docs: https://woodpecker-ci.org/api
+  - surface: Pipeline approval
+    write_operation: POST /repos/{repo_id}/pipelines/{pipeline_number}/approve
+    operation_id: null
+    reversal: POST /repos/{repo_id}/pipelines/{pipeline_number}/decline
+    reversal_summary: Decline a pipeline
+    window: null
+    window_note: >-
+      Approve and decline are mutually exclusive terminal decisions on a blocked
+      pipeline; decline is only available before approval starts the run.
+    docs: https://woodpecker-ci.org/api
+  - surface: Queue administration
+    write_operation: POST /queue/pause
+    operation_id: null
+    reversal: POST /queue/resume
+    reversal_summary: Resume the pipeline queue
+    window: null
+    window_note: Symmetric pause/resume pair with no stated window.
+    docs: https://woodpecker-ci.org/api
+  - surface: User API token
+    write_operation: POST /user/token
+    operation_id: null
+    reversal: DELETE /user/token
+    reversal_summary: Reset a token
+    window: null
+    window_note: >-
+      Reset invalidates the current token and issues a new one. This is a rotation, not
+      an undo — the previous token cannot be restored.
+    docs: https://woodpecker-ci.org/api
+  - surface: Pipeline restart
+    write_operation: POST /repos/{repo_id}/pipelines/{pipeline_number}
+    operation_id: null
+    reversal: POST /repos/{repo_id}/pipelines/{pipeline_number}/cancel
+    reversal_summary: Cancel the restarted run
+    window: null
+    docs: https://woodpecker-ci.org/api
+  irreversible:
+  - DELETE /repos/{repo_id} — Delete a repository. No restore operation exists.
+  - DELETE /repos/{repo_id}/pipelines/{pipeline_number} — Delete a pipeline. No undelete.
+  - DELETE /repos/{repo_id}/logs/{pipeline_number} — Deletes all logs of a pipeline. No undelete.
+  - DELETE /users/{login} — Delete a user. No restore.
+  - DELETE /orgs/{org_id} — Delete an organization. No restore.
+  - DELETE on secrets, registries, crons, agents and forges — all hard deletes with no
+    documented soft-delete window or restore path.
+dry_run_mode:
+  supported: true
+  scope: product-not-api
+  mechanism: woodpecker-cli exec
+  note: >-
+    `woodpecker-cli exec` runs a workflow file from a local checkout without a server,
+    with overridable metadata, so a pipeline change can be rehearsed before it is pushed.
+    That is a real rehearsal surface for the PRODUCT, but there is no dry-run/validate
+    parameter on any REST write operation.
+  docs: https://woodpecker-ci.org/docs/usage/local-execution
+cross_references:
+  errors: errors/woodpecker-ci-problem-types.yml
+  lifecycle: lifecycle/woodpecker-ci-lifecycle.yml
+  authentication: authentication/woodpecker-ci-authentication.yml
+  rate_limits: rate-limits/woodpecker-ci-rate-limits.yml
