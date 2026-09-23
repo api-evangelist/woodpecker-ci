@@ -13,13 +13,13 @@ info:
 servers:
 - url: https://ci.woodpecker-ci.org/api
 tags:
-- name: Organization permissions
+- name: Organization Permissions
 paths:
   /orgs/{org_id}/permissions:
     get:
       tags:
-      - Organization permissions
-      summary: Get the permissions of the currently authenticated user for the given organization
+      - Organization Permissions
+      summary: Get the permissions of the currently authenticated user for the given…
       parameters:
       - description: Insert your personal access token
         name: Authorization
@@ -43,6 +43,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrgPerm'
+      operationId: getOrgsByOrgIdPermissions
+      x-operation-id-source: derived
 components:
   schemas:
     OrgPerm:

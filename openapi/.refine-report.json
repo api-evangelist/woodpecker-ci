@@ -1,7 +1,7 @@
 {
   "provider": "woodpecker-ci",
   "sources": [
-    "woodpecker-ci-server-swagger.json"
+    "_original/woodpecker-ci-server-swagger.json"
   ],
   "outputs": [
     "woodpecker-ci-agents-api-openapi.yml",
@@ -27,12 +27,11 @@
     "woodpecker-ci-user-api-openapi.yml",
     "woodpecker-ci-users-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/woodpecker-ci-server-swagger.json"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "woodpecker-ci-server-swagger.json: upgraded swagger 2.0 -> OpenAPI 3.2.0",
     "woodpecker-ci-server-swagger.json: declared missing tag: Agents",
     "woodpecker-ci-server-swagger.json: declared missing tag: Badges",
@@ -56,7 +55,30 @@
     "woodpecker-ci-server-swagger.json: declared missing tag: System",
     "woodpecker-ci-server-swagger.json: declared missing tag: User",
     "woodpecker-ci-server-swagger.json: declared missing tag: Users",
-    "apis.yml register: written (+22 apis, 22 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "woodpecker-ci-agents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-badges-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-forges-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-organization-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-organization-permissions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-organization-registries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-organization-secrets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-orgs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-pipeline-logs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-pipeline-queues-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-pipelines-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-process-profiling-and-debugging-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-registries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-repositories-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-repository-cron-jobs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-repository-registries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-repository-secrets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-secrets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-system-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-user-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "woodpecker-ci-users-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

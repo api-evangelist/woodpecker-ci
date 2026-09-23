@@ -43,6 +43,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteReposByRepoIdLogsByPipelineNumber
+      x-operation-id-source: derived
   /repos/{repo_id}/logs/{pipeline_number}/{step_id}:
     get:
       tags:
@@ -83,6 +85,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LogEntry'
+      operationId: getReposByRepoIdLogsByPipelineNumberByStepId
+      x-operation-id-source: derived
     delete:
       tags:
       - Pipeline logs
@@ -116,6 +120,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteReposByRepoIdLogsByPipelineNumberByStepId
+      x-operation-id-source: derived
   /repos/{repo_id}/logs/{pipeline_number}/{step_id}/download:
     get:
       tags:
@@ -154,6 +160,8 @@ paths:
             text/plain:
               schema:
                 type: string
+      operationId: getReposByRepoIdLogsByPipelineNumberByStepIdDownload
+      x-operation-id-source: derived
   /stream/logs/{repo_id}/{pipeline}/{step_id}:
     get:
       tags:
@@ -181,6 +189,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: getStreamLogsByRepoIdByPipelineByStepId
+      x-operation-id-source: derived
 components:
   schemas:
     LogEntry:

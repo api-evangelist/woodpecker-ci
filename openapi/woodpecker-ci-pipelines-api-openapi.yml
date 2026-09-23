@@ -86,6 +86,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pipeline'
+      operationId: getReposByRepoIdPipelines
+      x-operation-id-source: derived
     post:
       tags:
       - Pipelines
@@ -118,6 +120,8 @@ paths:
               $ref: '#/components/schemas/PipelineOptions'
         description: the options for the pipeline to run
         required: true
+      operationId: postReposByRepoIdPipelines
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}:
     get:
       tags:
@@ -150,6 +154,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
+      operationId: getReposByRepoIdPipelinesByPipelineNumber
+      x-operation-id-source: derived
     post:
       description: Restarts a pipeline optional with altered event, deploy or environment
       tags:
@@ -192,6 +198,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
+      operationId: postReposByRepoIdPipelinesByPipelineNumber
+      x-operation-id-source: derived
     delete:
       tags:
       - Pipelines
@@ -219,6 +227,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteReposByRepoIdPipelinesByPipelineNumber
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}/approve:
     post:
       tags:
@@ -251,6 +261,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
+      operationId: postReposByRepoIdPipelinesByPipelineNumberApprove
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}/cancel:
     post:
       tags:
@@ -279,6 +291,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: postReposByRepoIdPipelinesByPipelineNumberCancel
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}/config:
     get:
       tags:
@@ -313,6 +327,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Config'
+      operationId: getReposByRepoIdPipelinesByPipelineNumberConfig
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}/decline:
     post:
       tags:
@@ -345,11 +361,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
+      operationId: postReposByRepoIdPipelinesByPipelineNumberDecline
+      x-operation-id-source: derived
   /repos/{repo_id}/pipelines/{pipeline_number}/metadata:
     get:
       tags:
       - Pipelines
-      summary: Get metadata for a pipeline or a specific workflow, including previous pipeline info
+      summary: Get metadata for a pipeline or a specific workflow, including previous pipeline…
       parameters:
       - description: Insert your personal access token
         name: Authorization
@@ -377,93 +395,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/metadata.Metadata'
+      operationId: getReposByRepoIdPipelinesByPipelineNumberMetadata
+      x-operation-id-source: derived
 components:
   schemas:
-    Step:
+    metadata.System:
       type: object
       properties:
-        error:
+        arch:
           type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    errors.PipelineErrorType:
-      type: string
-      enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
-      x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    metadata.TrustedConfiguration:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    metadata.Workflow:
-      type: object
-      properties:
-        matrix:
-          type: object
-          additionalProperties:
-            type: string
-        name:
-          type: string
-        number:
-          type: integer
-    Config:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: integer
-        hash:
+        host:
           type: string
         name:
           type: string
-    metadata.Event:
+        url:
+          type: string
+        version:
+          type: string
+    WebhookEvent:
       type: string
       enum:
       - push
@@ -485,63 +434,6 @@ components:
       - EventDeploy
       - EventCron
       - EventManual
-    metadata.Metadata:
-      type: object
-      properties:
-        curr:
-          $ref: '#/components/schemas/metadata.Pipeline'
-        forge:
-          $ref: '#/components/schemas/metadata.Forge'
-        id:
-          type: string
-        prev:
-          $ref: '#/components/schemas/metadata.Pipeline'
-        repo:
-          $ref: '#/components/schemas/metadata.Repo'
-        step:
-          $ref: '#/components/schemas/metadata.Step'
-        sys:
-          $ref: '#/components/schemas/metadata.System'
-        workflow:
-          $ref: '#/components/schemas/metadata.Workflow'
-    metadata.System:
-      type: object
-      properties:
-        arch:
-          type: string
-        host:
-          type: string
-        name:
-          type: string
-        url:
-          type: string
-        version:
-          type: string
-    metadata.Repo:
-      type: object
-      properties:
-        clone_url:
-          type: string
-        clone_url_ssh:
-          type: string
-        default_branch:
-          type: string
-        forge_url:
-          type: string
-        id:
-          type: integer
-        name:
-          type: string
-        org_id:
-          type: integer
-        owner:
-          type: string
-        private:
-          type: boolean
-        remote_id:
-          type: string
-        trusted:
-          $ref: '#/components/schemas/metadata.TrustedConfiguration'
     model.Workflow:
       type: object
       properties:
@@ -573,76 +465,12 @@ components:
           type: integer
         state:
           $ref: '#/components/schemas/StatusValue'
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
-    PipelineOptions:
+    metadata.Release:
       type: object
       properties:
-        branch:
-          type: string
-        message:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
-    metadata.Forge:
-      type: object
-      properties:
-        type:
-          type: string
-        url:
-          type: string
-    metadata.Pipeline:
-      type: object
-      properties:
-        author:
-          type: string
-        avatar:
-          type: string
-        commit:
-          $ref: '#/components/schemas/metadata.Commit'
-        created:
-          type: integer
-        cron:
-          type: string
-        event:
-          $ref: '#/components/schemas/metadata.Event'
-        event_reason:
-          type: array
-          items:
-            type: string
-        finished:
-          type: integer
-        forge_url:
-          type: string
-        number:
-          type: integer
-        parent:
-          type: integer
-        release:
-          $ref: '#/components/schemas/metadata.Release'
-        rerun_count:
-          type: integer
-        started:
-          type: integer
-        status:
-          type: string
-        target:
-          type: string
-        task:
+        is_prerelease:
+          type: boolean
+        title:
           type: string
     errors.PipelineError:
       type: object
@@ -654,29 +482,76 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/errors.PipelineErrorType'
-    metadata.Author:
+    Config:
       type: object
       properties:
-        email:
+        data:
+          type: array
+          items:
+            type: integer
+        hash:
           type: string
         name:
           type: string
-    metadata.Step:
+    PipelineOptions:
       type: object
       properties:
+        branch:
+          type: string
+        message:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    metadata.Repo:
+      type: object
+      properties:
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        default_branch:
+          type: string
+        forge_url:
+          type: string
+        id:
+          type: integer
         name:
           type: string
-        number:
+        org_id:
           type: integer
-    CancelInfo:
+        owner:
+          type: string
+        private:
+          type: boolean
+        remote_id:
+          type: string
+        trusted:
+          $ref: '#/components/schemas/metadata.TrustedConfiguration'
+    metadata.Forge:
       type: object
       properties:
-        canceled_by_step:
+        type:
           type: string
-        canceled_by_user:
+        url:
           type: string
-        superseded_by:
-          type: integer
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    metadata.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
     Pipeline:
       type: object
       properties:
@@ -813,6 +688,165 @@ components:
           type: string
         timestamp:
           type: integer
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    metadata.Workflow:
+      type: object
+      properties:
+        matrix:
+          type: object
+          additionalProperties:
+            type: string
+        name:
+          type: string
+        number:
+          type: integer
+    metadata.Pipeline:
+      type: object
+      properties:
+        author:
+          type: string
+        avatar:
+          type: string
+        commit:
+          $ref: '#/components/schemas/metadata.Commit'
+        created:
+          type: integer
+        cron:
+          type: string
+        event:
+          $ref: '#/components/schemas/metadata.Event'
+        event_reason:
+          type: array
+          items:
+            type: string
+        finished:
+          type: integer
+        forge_url:
+          type: string
+        number:
+          type: integer
+        parent:
+          type: integer
+        release:
+          $ref: '#/components/schemas/metadata.Release'
+        rerun_count:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        target:
+          type: string
+        task:
+          type: string
+    metadata.Step:
+      type: object
+      properties:
+        name:
+          type: string
+        number:
+          type: integer
+    CancelInfo:
+      type: object
+      properties:
+        canceled_by_step:
+          type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    metadata.Metadata:
+      type: object
+      properties:
+        curr:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        forge:
+          $ref: '#/components/schemas/metadata.Forge'
+        id:
+          type: string
+        prev:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        repo:
+          $ref: '#/components/schemas/metadata.Repo'
+        step:
+          $ref: '#/components/schemas/metadata.Step'
+        sys:
+          $ref: '#/components/schemas/metadata.System'
+        workflow:
+          $ref: '#/components/schemas/metadata.Workflow'
+    metadata.Author:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
     StatusValue:
       type: string
       enum:
@@ -863,21 +897,7 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    metadata.Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    WebhookEvent:
+    metadata.Event:
       type: string
       enum:
       - push

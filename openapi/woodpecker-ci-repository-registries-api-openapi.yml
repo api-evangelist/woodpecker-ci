@@ -55,6 +55,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Registry'
+      operationId: getReposByRepoIdRegistries
+      x-operation-id-source: derived
     post:
       tags:
       - Repository registries
@@ -87,6 +89,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the new registry data
         required: true
+      operationId: postReposByRepoIdRegistries
+      x-operation-id-source: derived
   /repos/{repo_id}/registries/{registry}:
     get:
       tags:
@@ -119,6 +123,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Registry'
+      operationId: getReposByRepoIdRegistriesByRegistry
+      x-operation-id-source: derived
     delete:
       tags:
       - Repository registries
@@ -146,6 +152,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteReposByRepoIdRegistriesByRegistry
+      x-operation-id-source: derived
     patch:
       tags:
       - Repository registries
@@ -184,6 +192,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the attributes for the registry
         required: true
+      operationId: patchReposByRepoIdRegistriesByRegistry
+      x-operation-id-source: derived
 components:
   schemas:
     Registry:

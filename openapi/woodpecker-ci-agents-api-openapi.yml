@@ -49,6 +49,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Agent'
+      operationId: getAgents
+      x-operation-id-source: derived
     post:
       description: Creates a new agent with a random token
       tags:
@@ -76,6 +78,8 @@ paths:
               $ref: '#/components/schemas/Agent'
         description: the agent's data (only 'name' and 'no_schedule' are read)
         required: true
+      operationId: postAgents
+      x-operation-id-source: derived
   /agents/{agent_id}:
     get:
       tags:
@@ -102,6 +106,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Agent'
+      operationId: getAgentsByAgentId
+      x-operation-id-source: derived
     delete:
       tags:
       - Agents
@@ -123,6 +129,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: deleteAgentsByAgentId
+      x-operation-id-source: derived
     patch:
       tags:
       - Agents
@@ -155,6 +163,8 @@ paths:
               $ref: '#/components/schemas/Agent'
         description: the agent's data
         required: true
+      operationId: patchAgentsByAgentId
+      x-operation-id-source: derived
   /agents/{agent_id}/tasks:
     get:
       tags:
@@ -183,6 +193,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Task'
+      operationId: getAgentsByAgentIdTasks
+      x-operation-id-source: derived
   /orgs/{org_id}/agents:
     get:
       tags:
@@ -223,6 +235,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Agent'
+      operationId: getOrgsByOrgIdAgents
+      x-operation-id-source: derived
     post:
       description: Creates a new agent with a random token, scoped to the specified organization
       tags:
@@ -256,6 +270,8 @@ paths:
               $ref: '#/components/schemas/Agent'
         description: the agent's data (only 'name' and 'no_schedule' are read)
         required: true
+      operationId: postOrgsByOrgIdAgents
+      x-operation-id-source: derived
   /orgs/{org_id}/agents/{agent_id}:
     delete:
       tags:
@@ -284,6 +300,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteOrgsByOrgIdAgentsByAgentId
+      x-operation-id-source: derived
     patch:
       tags:
       - Agents
@@ -322,45 +340,56 @@ paths:
               $ref: '#/components/schemas/Agent'
         description: the agent's updated data
         required: true
+      operationId: patchOrgsByOrgIdAgentsByAgentId
+      x-operation-id-source: derived
 components:
   schemas:
-    Agent:
+    Task:
       type: object
       properties:
-        backend:
+        agent_id:
+          type: integer
+        concurrency_group:
+          description: 'ConcurrencyGroup identifies tasks that are limited against each other.
+
+            It is empty when no concurrency limit applies.'
           type: string
-        capacity:
+        concurrency_limit:
+          description: 'ConcurrencyLimit is the maximum number of tasks sharing the same
+
+            ConcurrencyGroup that may run at once. A value <= 0 means unlimited.'
           type: integer
         created:
+          description: 'Created is the unix timestamp the task''s pipeline was created at. It
+
+            defines the queue ordering across pipelines.'
           type: integer
-        custom_labels:
+        dep_status:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/StatusValue'
+        dependencies:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        labels:
           type: object
           additionalProperties:
             type: string
-        id:
-          type: integer
-        last_contact:
-          type: integer
-        last_work:
-          description: last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
-          type: integer
         name:
           type: string
-        no_schedule:
-          type: boolean
-        org_id:
-          description: OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
+        pid:
           type: integer
-        owner_id:
+        pipeline_id:
           type: integer
-        platform:
-          type: string
-        token:
-          type: string
-        updated:
+        repo_id:
           type: integer
-        version:
-          type: string
+        run_on:
+          type: array
+          items:
+            type: string
     StatusValue:
       type: string
       enum:
@@ -411,49 +440,40 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    Task:
+    Agent:
       type: object
       properties:
-        agent_id:
-          type: integer
-        concurrency_group:
-          description: 'ConcurrencyGroup identifies tasks that are limited against each other.
-
-            It is empty when no concurrency limit applies.'
+        backend:
           type: string
-        concurrency_limit:
-          description: 'ConcurrencyLimit is the maximum number of tasks sharing the same
-
-            ConcurrencyGroup that may run at once. A value <= 0 means unlimited.'
+        capacity:
           type: integer
         created:
-          description: 'Created is the unix timestamp the task''s pipeline was created at. It
-
-            defines the queue ordering across pipelines.'
           type: integer
-        dep_status:
+        custom_labels:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/StatusValue'
-        dependencies:
-          type: array
-          items:
             type: string
         id:
-          type: string
-        labels:
-          type: object
-          additionalProperties:
-            type: string
+          type: integer
+        last_contact:
+          type: integer
+        last_work:
+          description: last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
+          type: integer
         name:
           type: string
-        pid:
+        no_schedule:
+          type: boolean
+        org_id:
+          description: OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
           type: integer
-        pipeline_id:
+        owner_id:
           type: integer
-        repo_id:
+        platform:
+          type: string
+        token:
+          type: string
+        updated:
           type: integer
-        run_on:
-          type: array
-          items:
-            type: string
+        version:
+          type: string

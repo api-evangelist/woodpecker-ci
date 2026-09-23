@@ -43,6 +43,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Org'
+      operationId: getOrgsByOrgId
+      x-operation-id-source: derived
 components:
   schemas:
     Org:

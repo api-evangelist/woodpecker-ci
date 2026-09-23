@@ -55,6 +55,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Repo'
+      operationId: getRepos
+      x-operation-id-source: derived
     post:
       tags:
       - Repositories
@@ -80,6 +82,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Repo'
+      operationId: postRepos
+      x-operation-id-source: derived
   /repos/lookup/{repo_full_name}:
     get:
       tags:
@@ -106,6 +110,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Repo'
+      operationId: getReposLookupByRepoFullName
+      x-operation-id-source: derived
   /repos/repair:
     post:
       description: Executes a repair process on all repositories. Requires admin rights.
@@ -123,6 +129,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: postReposRepair
+      x-operation-id-source: derived
   /repos/{repo_id}:
     get:
       tags:
@@ -149,6 +157,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Repo'
+      operationId: getReposByRepoId
+      x-operation-id-source: derived
     delete:
       tags:
       - Repositories
@@ -174,6 +184,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Repo'
+      operationId: deleteReposByRepoId
+      x-operation-id-source: derived
     patch:
       tags:
       - Repositories
@@ -206,6 +218,8 @@ paths:
               $ref: '#/components/schemas/RepoPatch'
         description: the repository's information
         required: true
+      operationId: patchReposByRepoId
+      x-operation-id-source: derived
   /repos/{repo_id}/branches:
     get:
       tags:
@@ -246,6 +260,8 @@ paths:
                 type: array
                 items:
                   type: string
+      operationId: getReposByRepoIdBranches
+      x-operation-id-source: derived
   /repos/{repo_id}/chown:
     post:
       tags:
@@ -272,6 +288,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Repo'
+      operationId: postReposByRepoIdChown
+      x-operation-id-source: derived
   /repos/{repo_id}/move:
     post:
       tags:
@@ -300,6 +318,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: postReposByRepoIdMove
+      x-operation-id-source: derived
   /repos/{repo_id}/permissions:
     get:
       description: The repository permission, according to the used access token.
@@ -327,6 +347,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Perm'
+      operationId: getReposByRepoIdPermissions
+      x-operation-id-source: derived
   /repos/{repo_id}/pull_requests:
     get:
       tags:
@@ -367,6 +389,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PullRequest'
+      operationId: getReposByRepoIdPullRequests
+      x-operation-id-source: derived
   /repos/{repo_id}/repair:
     post:
       tags:
@@ -389,33 +413,32 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: postReposByRepoIdRepair
+      x-operation-id-source: derived
 components:
   schemas:
-    model.TrustedConfigurationPatch:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    PullRequest:
-      type: object
-      properties:
-        index:
-          type: string
-        title:
-          type: string
-    model.TrustedConfiguration:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
     RepoPatch:
       type: object
       properties:
@@ -459,6 +482,52 @@ components:
           $ref: '#/components/schemas/model.TrustedConfigurationPatch'
         visibility:
           type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    Perm:
+      type: object
+      properties:
+        admin:
+          type: boolean
+        created:
+          type: integer
+        pull:
+          type: boolean
+        push:
+          type: boolean
+        synced:
+          type: integer
+        updated:
+          type: integer
     Repo:
       type: object
       properties:
@@ -549,62 +618,19 @@ components:
       - VisibilityPublic
       - VisibilityPrivate
       - VisibilityInternal
-    Perm:
+    PullRequest:
       type: object
       properties:
-        admin:
+        index:
+          type: string
+        title:
+          type: string
+    model.TrustedConfigurationPatch:
+      type: object
+      properties:
+        network:
           type: boolean
-        created:
-          type: integer
-        pull:
+        security:
           type: boolean
-        push:
+        volumes:
           type: boolean
-        synced:
-          type: integer
-        updated:
-          type: integer
-    model.ApprovalMode:
-      type: string
-      enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
-      x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual

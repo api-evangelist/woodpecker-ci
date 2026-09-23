@@ -48,6 +48,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Forge'
+      operationId: getForges
+      x-operation-id-source: derived
     post:
       description: Creates a new forge with a random token
       tags:
@@ -75,6 +77,8 @@ paths:
               $ref: '#/components/schemas/ForgeWithOAuthClientSecret'
         description: the forge's data (only 'name' and 'no_schedule' are read)
         required: true
+      operationId: postForges
+      x-operation-id-source: derived
   /forges/{forge_id}:
     get:
       tags:
@@ -100,6 +104,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Forge'
+      operationId: getForgesByForgeId
+      x-operation-id-source: derived
     delete:
       tags:
       - Forges
@@ -121,6 +127,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: deleteForgesByForgeId
+      x-operation-id-source: derived
     patch:
       tags:
       - Forges
@@ -153,6 +161,8 @@ paths:
               $ref: '#/components/schemas/ForgeWithOAuthClientSecret'
         description: the forge's data
         required: true
+      operationId: patchForgesByForgeId
+      x-operation-id-source: derived
 components:
   schemas:
     ForgeWithOAuthClientSecret:
@@ -167,30 +177,6 @@ components:
           type: integer
         oauth_client_secret:
           type: string
-        oauth_host:
-          description: public url for oauth if different from url
-          type: string
-        orgs:
-          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
-          type: array
-          items:
-            type: string
-        skip_verify:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/model.ForgeType'
-        url:
-          type: string
-    Forge:
-      type: object
-      properties:
-        additional_options:
-          type: object
-          additionalProperties: {}
-        client:
-          type: string
-        id:
-          type: integer
         oauth_host:
           description: public url for oauth if different from url
           type: string
@@ -223,3 +209,27 @@ components:
       - ForgeTypeBitbucket
       - ForgeTypeBitbucketDatacenter
       - ForgeTypeAddon
+    Forge:
+      type: object
+      properties:
+        additional_options:
+          type: object
+          additionalProperties: {}
+        client:
+          type: string
+        id:
+          type: integer
+        oauth_host:
+          description: public url for oauth if different from url
+          type: string
+        orgs:
+          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
+          type: array
+          items:
+            type: string
+        skip_verify:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/model.ForgeType'
+        url:
+          type: string

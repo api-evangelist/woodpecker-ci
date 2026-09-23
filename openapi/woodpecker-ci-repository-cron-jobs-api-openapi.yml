@@ -55,6 +55,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Cron'
+      operationId: getReposByRepoIdCron
+      x-operation-id-source: derived
     post:
       tags:
       - Repository cron jobs
@@ -87,6 +89,8 @@ paths:
               $ref: '#/components/schemas/Cron'
         description: the new cron job
         required: true
+      operationId: postReposByRepoIdCron
+      x-operation-id-source: derived
   /repos/{repo_id}/cron/{cron}:
     get:
       tags:
@@ -119,6 +123,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cron'
+      operationId: getReposByRepoIdCronByCron
+      x-operation-id-source: derived
     post:
       tags:
       - Repository cron jobs
@@ -150,6 +156,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
+      operationId: postReposByRepoIdCronByCron
+      x-operation-id-source: derived
     delete:
       tags:
       - Repository cron jobs
@@ -177,6 +185,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteReposByRepoIdCronByCron
+      x-operation-id-source: derived
     patch:
       tags:
       - Repository cron jobs
@@ -215,66 +225,19 @@ paths:
               $ref: '#/components/schemas/CronPatch'
         description: the cron job data
         required: true
+      operationId: patchReposByRepoIdCronByCron
+      x-operation-id-source: derived
 components:
   schemas:
-    Step:
+    CancelInfo:
       type: object
       properties:
-        error:
+        canceled_by_step:
           type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
+        canceled_by_user:
           type: string
-        pid:
+        superseded_by:
           type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    CronPatch:
-      type: object
-      properties:
-        branch:
-          type: string
-        enabled:
-          type: boolean
-        name:
-          type: string
-        schedule:
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
     errors.PipelineErrorType:
       type: string
       enum:
@@ -301,15 +264,107 @@ components:
       - PipelineErrorTypeCompiler
       - PipelineErrorTypeGeneric
       - PipelineErrorTypeBadHabit
-    CancelInfo:
+    CronPatch:
       type: object
       properties:
-        canceled_by_step:
+        branch:
           type: string
-        canceled_by_user:
+        enabled:
+          type: boolean
+        name:
           type: string
-        superseded_by:
+        schedule:
+          type: string
+        timezone:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
           type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
+          type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
     Pipeline:
       type: object
       properties:
@@ -417,67 +472,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    Cron:
-      type: object
-      properties:
-        branch:
-          type: string
-        created:
-          type: integer
-        creator_id:
-          description: 'TODO: drop with next major version'
-          type: integer
-        enabled:
-          type: boolean
-        id:
-          type: integer
-        name:
-          type: string
-        next_exec:
-          type: integer
-        repo_id:
-          type: integer
-        schedule:
-          description: "@weekly,\t3min, ..."
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
-    errors.PipelineError:
-      type: object
-      properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
-          type: string
-        type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
     StatusValue:
       type: string
       enum:
@@ -528,28 +522,42 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    Release:
+    Cron:
       type: object
       properties:
-        is_prerelease:
-          type: boolean
-        title:
+        branch:
           type: string
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
+        created:
           type: integer
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Step'
-        environ:
+        creator_id:
+          description: 'TODO: drop with next major version'
+          type: integer
+        enabled:
+          type: boolean
+        id:
+          type: integer
+        name:
+          type: string
+        next_exec:
+          type: integer
+        repo_id:
+          type: integer
+        schedule:
+          description: "@weekly,\t3min, ..."
+          type: string
+        timezone:
+          type: string
+        variables:
           type: object
           additionalProperties:
             type: string
+    Step:
+      type: object
+      properties:
         error:
           type: string
+        exit_code:
+          type: integer
         finished:
           type: integer
         id:
@@ -560,9 +568,13 @@ components:
           type: integer
         pipeline_id:
           type: integer
-        platform:
-          type: string
+        ppid:
+          type: integer
         started:
           type: integer
         state:
           $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string

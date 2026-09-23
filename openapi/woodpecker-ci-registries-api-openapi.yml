@@ -49,6 +49,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Registry'
+      operationId: getRegistries
+      x-operation-id-source: derived
     post:
       tags:
       - Registries
@@ -75,6 +77,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the registry object data
         required: true
+      operationId: postRegistries
+      x-operation-id-source: derived
   /registries/{registry}:
     get:
       tags:
@@ -101,6 +105,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Registry'
+      operationId: getRegistriesByRegistry
+      x-operation-id-source: derived
     delete:
       tags:
       - Registries
@@ -122,6 +128,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteRegistriesByRegistry
+      x-operation-id-source: derived
     patch:
       tags:
       - Registries
@@ -154,6 +162,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the registry's data
         required: true
+      operationId: patchRegistriesByRegistry
+      x-operation-id-source: derived
 components:
   schemas:
     Registry:

@@ -35,6 +35,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: getBadgesByRepoIdCcXml
+      x-operation-id-source: derived
   /badges/{repo_id}/status.svg:
     get:
       tags:
@@ -50,3 +52,5 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: getBadgesByRepoIdStatusSvg
+      x-operation-id-source: derived

@@ -26,6 +26,8 @@ paths:
           description: No Content
         '500':
           description: Internal Server Error
+      operationId: getHealthz
+      x-operation-id-source: derived
   /hook:
     post:
       tags:
@@ -41,6 +43,8 @@ paths:
               type: object
         description: the webhook payload; forge is automatically detected
         required: true
+      operationId: postHook
+      x-operation-id-source: derived
   /log-level:
     get:
       description: Endpoint returns the current logging level. Requires admin rights.
@@ -57,6 +61,8 @@ paths:
                 properties:
                   log-level:
                     type: string
+      operationId: getLogLevel
+      x-operation-id-source: derived
     post:
       description: Endpoint sets the current logging level. Requires admin rights.
       tags:
@@ -90,6 +96,8 @@ paths:
                   type: string
         description: the new log level, one of <debug,trace,info,warn,error,fatal,panic,disabled>
         required: true
+      operationId: postLogLevel
+      x-operation-id-source: derived
   /signature/public-key:
     get:
       tags:
@@ -106,6 +114,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: getSignaturePublicKey
+      x-operation-id-source: derived
   /version:
     get:
       description: Endpoint returns the server version and build information.
@@ -124,3 +134,5 @@ paths:
                     type: string
                   version:
                     type: string
+      operationId: getVersion
+      x-operation-id-source: derived

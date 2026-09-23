@@ -35,6 +35,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+      operationId: getUser
+      x-operation-id-source: derived
   /user/feed:
     get:
       description: The feed lists the most recent pipeline for the currently authenticated user.
@@ -58,6 +60,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Feed'
+      operationId: getUserFeed
+      x-operation-id-source: derived
   /user/repos:
     get:
       description: Retrieve the currently authenticated User's Repository list
@@ -91,6 +95,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RepoLastPipeline'
+      operationId: getUserRepos
+      x-operation-id-source: derived
   /user/token:
     post:
       tags:
@@ -107,6 +113,8 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: postUserToken
+      x-operation-id-source: derived
     delete:
       description: Reset's the current personal access token of the user and returns a new one.
       tags:
@@ -123,49 +131,19 @@ paths:
       responses:
         '200':
           description: OK
+      operationId: deleteUserToken
+      x-operation-id-source: derived
 components:
   schemas:
-    Step:
+    CancelInfo:
       type: object
       properties:
-        error:
+        canceled_by_step:
           type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
+        canceled_by_user:
           type: string
-        pid:
+        superseded_by:
           type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
     errors.PipelineErrorType:
       type: string
       enum:
@@ -192,6 +170,111 @@ components:
       - PipelineErrorTypeCompiler
       - PipelineErrorTypeGeneric
       - PipelineErrorTypeBadHabit
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
     RepoLastPipeline:
       type: object
       properties:
@@ -274,15 +357,6 @@ components:
           $ref: '#/components/schemas/model.TrustedConfiguration'
         visibility:
           $ref: '#/components/schemas/RepoVisibility'
-    CancelInfo:
-      type: object
-      properties:
-        canceled_by_step:
-          type: string
-        canceled_by_user:
-          type: string
-        superseded_by:
-          type: integer
     Pipeline:
       type: object
       properties:
@@ -390,15 +464,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    model.TrustedConfiguration:
+    errors.PipelineError:
       type: object
       properties:
-        network:
+        data: {}
+        is_warning:
           type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
+        message:
+          type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
     User:
       type: object
       properties:
@@ -450,47 +525,6 @@ components:
       - VisibilityPublic
       - VisibilityPrivate
       - VisibilityInternal
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
-          type: integer
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Step'
-        environ:
-          type: object
-          additionalProperties:
-            type: string
-        error:
-          type: string
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        platform:
-          type: string
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-    errors.PipelineError:
-      type: object
-      properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
-          type: string
-        type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
     StatusValue:
       type: string
       enum:
@@ -541,57 +575,6 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    model.ApprovalMode:
-      type: string
-      enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
-      x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
     Feed:
       type: object
       properties:
@@ -639,4 +622,31 @@ components:
         tag_title:
           type: string
         title:
+          type: string
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
           type: string

@@ -55,6 +55,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Registry'
+      operationId: getOrgsByOrgIdRegistries
+      x-operation-id-source: derived
     post:
       tags:
       - Organization registries
@@ -87,6 +89,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the new registry
         required: true
+      operationId: postOrgsByOrgIdRegistries
+      x-operation-id-source: derived
   /orgs/{org_id}/registries/{registry}:
     get:
       tags:
@@ -119,6 +123,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Registry'
+      operationId: getOrgsByOrgIdRegistriesByRegistry
+      x-operation-id-source: derived
     delete:
       tags:
       - Organization registries
@@ -146,6 +152,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteOrgsByOrgIdRegistriesByRegistry
+      x-operation-id-source: derived
     patch:
       tags:
       - Organization registries
@@ -184,6 +192,8 @@ paths:
               $ref: '#/components/schemas/Registry'
         description: the update registry data
         required: true
+      operationId: patchOrgsByOrgIdRegistriesByRegistry
+      x-operation-id-source: derived
 components:
   schemas:
     Registry:

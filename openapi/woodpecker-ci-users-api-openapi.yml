@@ -50,6 +50,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+      operationId: getUsers
+      x-operation-id-source: derived
     post:
       description: Creates a new user account with the specified external login. Requires admin rights.
       tags:
@@ -77,6 +79,8 @@ paths:
               $ref: '#/components/schemas/User'
         description: the user's data
         required: true
+      operationId: postUsers
+      x-operation-id-source: derived
   /users/{login}:
     get:
       description: Returns a user with the specified login name. Requires admin rights.
@@ -115,6 +119,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+      operationId: getUsersByLogin
+      x-operation-id-source: derived
     delete:
       description: Deletes the given user. Requires admin rights.
       tags:
@@ -148,6 +154,8 @@ paths:
       responses:
         '204':
           description: No Content
+      operationId: deleteUsersByLogin
+      x-operation-id-source: derived
     patch:
       description: Changes the data of an existing user. Requires admin rights.
       tags:
@@ -181,6 +189,8 @@ paths:
               $ref: '#/components/schemas/User'
         description: the user's data
         required: true
+      operationId: patchUsersByLogin
+      x-operation-id-source: derived
 components:
   schemas:
     User:
