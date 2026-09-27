@@ -118,63 +118,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    QueueInfo:
-      type: object
-      properties:
-        paused:
-          type: boolean
-        pending:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
-        running:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
-        stats:
-          type: object
-          properties:
-            pending_count:
-              type: integer
-            running_count:
-              type: integer
-            waiting_on_deps_count:
-              type: integer
-            worker_count:
-              type: integer
-        waiting_on_deps:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
     model.QueueTask:
       type: object
       properties:
@@ -275,6 +218,41 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    QueueInfo:
+      type: object
+      properties:
+        paused:
+          type: boolean
+        pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        running:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        stats:
+          type: object
+          properties:
+            pending_count:
+              type: integer
+            running_count:
+              type: integer
+            waiting_on_deps_count:
+              type: integer
+            worker_count:
+              type: integer
+        waiting_on_deps:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
     Feed:
       type: object
       properties:
@@ -323,3 +301,25 @@ components:
           type: string
         title:
           type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual

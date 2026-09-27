@@ -390,6 +390,43 @@ components:
           type: array
           items:
             type: string
+    Agent:
+      type: object
+      properties:
+        backend:
+          type: string
+        capacity:
+          type: integer
+        created:
+          type: integer
+        custom_labels:
+          type: object
+          additionalProperties:
+            type: string
+        id:
+          type: integer
+        last_contact:
+          type: integer
+        last_work:
+          description: last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
+          type: integer
+        name:
+          type: string
+        no_schedule:
+          type: boolean
+        org_id:
+          description: OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
+          type: integer
+        owner_id:
+          type: integer
+        platform:
+          type: string
+        token:
+          type: string
+        updated:
+          type: integer
+        version:
+          type: string
     StatusValue:
       type: string
       enum:
@@ -440,40 +477,3 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    Agent:
-      type: object
-      properties:
-        backend:
-          type: string
-        capacity:
-          type: integer
-        created:
-          type: integer
-        custom_labels:
-          type: object
-          additionalProperties:
-            type: string
-        id:
-          type: integer
-        last_contact:
-          type: integer
-        last_work:
-          description: last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
-          type: integer
-        name:
-          type: string
-        no_schedule:
-          type: boolean
-        org_id:
-          description: OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
-          type: integer
-        owner_id:
-          type: integer
-        platform:
-          type: string
-        token:
-          type: string
-        updated:
-          type: integer
-        version:
-          type: string

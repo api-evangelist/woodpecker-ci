@@ -50,11 +50,12 @@ tags:
 - Continuous Delivery
 - DevOps
 - Developer Tools
-- Open-Source
+- Open Source
 - Pipelines
 - Self-Hosted
 - Build Automation
 - Containers
+- CI/CD
 tags_raw:
 - Company
 - Continuous Integration
@@ -66,6 +67,8 @@ tags_raw:
 - Self-Hosted
 - Build Automation
 - Containers
+- Open-Source
+- CI/CD
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

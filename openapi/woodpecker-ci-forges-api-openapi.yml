@@ -165,32 +165,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ForgeWithOAuthClientSecret:
-      type: object
-      properties:
-        additional_options:
-          type: object
-          additionalProperties: {}
-        client:
-          type: string
-        id:
-          type: integer
-        oauth_client_secret:
-          type: string
-        oauth_host:
-          description: public url for oauth if different from url
-          type: string
-        orgs:
-          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
-          type: array
-          items:
-            type: string
-        skip_verify:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/model.ForgeType'
-        url:
-          type: string
     model.ForgeType:
       type: string
       enum:
@@ -219,6 +193,32 @@ components:
           type: string
         id:
           type: integer
+        oauth_host:
+          description: public url for oauth if different from url
+          type: string
+        orgs:
+          description: members of those orgs may log in using this forge, in addition to the globally allowed ones
+          type: array
+          items:
+            type: string
+        skip_verify:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/model.ForgeType'
+        url:
+          type: string
+    ForgeWithOAuthClientSecret:
+      type: object
+      properties:
+        additional_options:
+          type: object
+          additionalProperties: {}
+        client:
+          type: string
+        id:
+          type: integer
+        oauth_client_secret:
+          type: string
         oauth_host:
           description: public url for oauth if different from url
           type: string

@@ -135,146 +135,47 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CancelInfo:
+    User:
       type: object
       properties:
-        canceled_by_step:
+        admin:
+          description: 'Admin indicates the user is a system administrator.
+
+
+            NOTE: If the username is part of the WOODPECKER_ADMIN
+
+            environment variable, this value will be set to true on login.'
+          type: boolean
+        admin_env:
+          type: boolean
+        avatar_url:
+          description: the avatar url for this user.
           type: string
-        canceled_by_user:
+        email:
+          description: 'Email is the email address for this user.
+
+
+            required: true'
           type: string
-        superseded_by:
+        forge_id:
           type: integer
-    errors.PipelineErrorType:
-      type: string
-      enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
-      x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    model.ApprovalMode:
-      type: string
-      enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
-      x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
-          type: integer
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Step'
-        environ:
-          type: object
-          additionalProperties:
-            type: string
-        error:
+        forge_remote_id:
           type: string
-        finished:
-          type: integer
         id:
+          description: 'the id for this user.
+
+
+            required: true'
           type: integer
-        name:
+        login:
+          description: 'Login is the username for this user.
+
+
+            required: true'
           type: string
-        pid:
+        org_id:
+          description: OrgID is the of the user as model.Org.
           type: integer
-        pipeline_id:
-          type: integer
-        platform:
-          type: string
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    model.TrustedConfiguration:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
     RepoLastPipeline:
       type: object
       properties:
@@ -357,6 +258,99 @@ components:
           $ref: '#/components/schemas/model.TrustedConfiguration'
         visibility:
           $ref: '#/components/schemas/RepoVisibility'
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
     Pipeline:
       type: object
       properties:
@@ -464,117 +458,99 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    errors.PipelineError:
+    model.Workflow:
       type: object
       properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
-          type: string
-        type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
-    User:
-      type: object
-      properties:
-        admin:
-          description: 'Admin indicates the user is a system administrator.
-
-
-            NOTE: If the username is part of the WOODPECKER_ADMIN
-
-            environment variable, this value will be set to true on login.'
-          type: boolean
-        admin_env:
-          type: boolean
-        avatar_url:
-          description: the avatar url for this user.
-          type: string
-        email:
-          description: 'Email is the email address for this user.
-
-
-            required: true'
-          type: string
-        forge_id:
+        agent_id:
           type: integer
-        forge_remote_id:
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
           type: string
+        finished:
+          type: integer
         id:
-          description: 'the id for this user.
-
-
-            required: true'
           type: integer
-        login:
-          description: 'Login is the username for this user.
-
-
-            required: true'
+        name:
           type: string
-        org_id:
-          description: OrgID is the of the user as model.Org.
+        pid:
           type: integer
-    RepoVisibility:
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    model.ApprovalMode:
       type: string
       enum:
-      - public
-      - private
-      - internal
-      x-enum-varnames:
-      - VisibilityPublic
-      - VisibilityPrivate
-      - VisibilityInternal
-    StatusValue:
-      type: string
-      enum:
-      - skipped
-      - pending
-      - running
-      - success
-      - failure
-      - killed
-      - canceled
-      - error
-      - blocked
-      - declined
-      - created
+      - none
+      - forks
+      - pull_requests
+      - all_events
       x-enum-comments:
-        StatusBlocked: waiting for approval
-        StatusCanceled: canceled but hasn't been started
-        StatusCreated: created / internal use only
-        StatusDeclined: blocked and declined
-        StatusError: error with the config / while parsing / some other system problem
-        StatusFailure: failed to finish (exit code != 0)
-        StatusKilled: killed by user
-        StatusPending: pending to be executed
-        StatusRunning: currently running
-        StatusSkipped: skipped as per condition of current workflow failed/success state
-        StatusSuccess: successfully finished
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
       x-enum-descriptions:
-      - skipped as per condition of current workflow failed/success state
-      - pending to be executed
-      - currently running
-      - successfully finished
-      - failed to finish (exit code != 0)
-      - killed by user
-      - canceled but hasn't been started
-      - error with the config / while parsing / some other system problem
-      - waiting for approval
-      - blocked and declined
-      - created / internal use only
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
       x-enum-varnames:
-      - StatusSkipped
-      - StatusPending
-      - StatusRunning
-      - StatusSuccess
-      - StatusFailure
-      - StatusKilled
-      - StatusCanceled
-      - StatusError
-      - StatusBlocked
-      - StatusDeclined
-      - StatusCreated
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
     Feed:
       type: object
       properties:
@@ -623,30 +599,54 @@ components:
           type: string
         title:
           type: string
-    Step:
+    CancelInfo:
       type: object
       properties:
-        error:
+        canceled_by_step:
           type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
+        canceled_by_user:
           type: string
-        pid:
+        superseded_by:
           type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
+    RepoVisibility:
+      type: string
+      enum:
+      - public
+      - private
+      - internal
+      x-enum-varnames:
+      - VisibilityPublic
+      - VisibilityPrivate
+      - VisibilityInternal
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
+          type: string
         type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
+          $ref: '#/components/schemas/errors.PipelineErrorType'

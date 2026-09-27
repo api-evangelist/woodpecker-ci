@@ -399,6 +399,127 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    metadata.Step:
+      type: object
+      properties:
+        name:
+          type: string
+        number:
+          type: integer
+    metadata.Metadata:
+      type: object
+      properties:
+        curr:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        forge:
+          $ref: '#/components/schemas/metadata.Forge'
+        id:
+          type: string
+        prev:
+          $ref: '#/components/schemas/metadata.Pipeline'
+        repo:
+          $ref: '#/components/schemas/metadata.Repo'
+        step:
+          $ref: '#/components/schemas/metadata.Step'
+        sys:
+          $ref: '#/components/schemas/metadata.System'
+        workflow:
+          $ref: '#/components/schemas/metadata.Workflow'
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    metadata.Author:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+    metadata.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    metadata.Commit:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/metadata.Author'
+        branch:
+          type: string
+        changed_files:
+          type: array
+          items:
+            type: string
+        draft:
+          type: boolean
+        labels:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+        milestone:
+          type: string
+        ref:
+          type: string
+        refspec:
+          type: string
+        sha:
+          type: string
+        timestamp:
+          type: integer
     metadata.System:
       type: object
       properties:
@@ -412,7 +533,17 @@ components:
           type: string
         version:
           type: string
-    WebhookEvent:
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
+          type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
+    metadata.Event:
       type: string
       enum:
       - push
@@ -434,6 +565,115 @@ components:
       - EventDeploy
       - EventCron
       - EventManual
+    metadata.Repo:
+      type: object
+      properties:
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        default_branch:
+          type: string
+        forge_url:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        org_id:
+          type: integer
+        owner:
+          type: string
+        private:
+          type: boolean
+        remote_id:
+          type: string
+        trusted:
+          $ref: '#/components/schemas/metadata.TrustedConfiguration'
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    metadata.Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    metadata.Pipeline:
+      type: object
+      properties:
+        author:
+          type: string
+        avatar:
+          type: string
+        commit:
+          $ref: '#/components/schemas/metadata.Commit'
+        created:
+          type: integer
+        cron:
+          type: string
+        event:
+          $ref: '#/components/schemas/metadata.Event'
+        event_reason:
+          type: array
+          items:
+            type: string
+        finished:
+          type: integer
+        forge_url:
+          type: string
+        number:
+          type: integer
+        parent:
+          type: integer
+        release:
+          $ref: '#/components/schemas/metadata.Release'
+        rerun_count:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        target:
+          type: string
+        task:
+          type: string
+    Config:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: integer
+        hash:
+          type: string
+        name:
+          type: string
     model.Workflow:
       type: object
       properties:
@@ -465,34 +705,39 @@ components:
           type: integer
         state:
           $ref: '#/components/schemas/StatusValue'
-    metadata.Release:
+    metadata.Workflow:
       type: object
       properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    errors.PipelineError:
-      type: object
-      properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
-          type: string
-        type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
-    Config:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            type: integer
-        hash:
-          type: string
+        matrix:
+          type: object
+          additionalProperties:
+            type: string
         name:
           type: string
+        number:
+          type: integer
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
     PipelineOptions:
       type: object
       properties:
@@ -504,31 +749,46 @@ components:
           type: object
           additionalProperties:
             type: string
-    metadata.Repo:
-      type: object
-      properties:
-        clone_url:
-          type: string
-        clone_url_ssh:
-          type: string
-        default_branch:
-          type: string
-        forge_url:
-          type: string
-        id:
-          type: integer
-        name:
-          type: string
-        org_id:
-          type: integer
-        owner:
-          type: string
-        private:
-          type: boolean
-        remote_id:
-          type: string
-        trusted:
-          $ref: '#/components/schemas/metadata.TrustedConfiguration'
+    StepType:
+      type: string
+      enum:
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
+      x-enum-varnames:
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
     metadata.Forge:
       type: object
       properties:
@@ -536,22 +796,15 @@ components:
           type: string
         url:
           type: string
-    Release:
+    CancelInfo:
       type: object
       properties:
-        is_prerelease:
-          type: boolean
-        title:
+        canceled_by_step:
           type: string
-    metadata.TrustedConfiguration:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
     Pipeline:
       type: object
       properties:
@@ -659,263 +912,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    metadata.Commit:
+    Release:
       type: object
       properties:
-        author:
-          $ref: '#/components/schemas/metadata.Author'
-        branch:
-          type: string
-        changed_files:
-          type: array
-          items:
-            type: string
-        draft:
+        is_prerelease:
           type: boolean
-        labels:
-          type: array
-          items:
-            type: string
-        message:
+        title:
           type: string
-        milestone:
-          type: string
-        ref:
-          type: string
-        refspec:
-          type: string
-        sha:
-          type: string
-        timestamp:
-          type: integer
-    Step:
-      type: object
-      properties:
-        error:
-          type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    errors.PipelineErrorType:
-      type: string
-      enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
-      x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
-    metadata.Workflow:
-      type: object
-      properties:
-        matrix:
-          type: object
-          additionalProperties:
-            type: string
-        name:
-          type: string
-        number:
-          type: integer
-    metadata.Pipeline:
-      type: object
-      properties:
-        author:
-          type: string
-        avatar:
-          type: string
-        commit:
-          $ref: '#/components/schemas/metadata.Commit'
-        created:
-          type: integer
-        cron:
-          type: string
-        event:
-          $ref: '#/components/schemas/metadata.Event'
-        event_reason:
-          type: array
-          items:
-            type: string
-        finished:
-          type: integer
-        forge_url:
-          type: string
-        number:
-          type: integer
-        parent:
-          type: integer
-        release:
-          $ref: '#/components/schemas/metadata.Release'
-        rerun_count:
-          type: integer
-        started:
-          type: integer
-        status:
-          type: string
-        target:
-          type: string
-        task:
-          type: string
-    metadata.Step:
-      type: object
-      properties:
-        name:
-          type: string
-        number:
-          type: integer
-    CancelInfo:
-      type: object
-      properties:
-        canceled_by_step:
-          type: string
-        canceled_by_user:
-          type: string
-        superseded_by:
-          type: integer
-    metadata.Metadata:
-      type: object
-      properties:
-        curr:
-          $ref: '#/components/schemas/metadata.Pipeline'
-        forge:
-          $ref: '#/components/schemas/metadata.Forge'
-        id:
-          type: string
-        prev:
-          $ref: '#/components/schemas/metadata.Pipeline'
-        repo:
-          $ref: '#/components/schemas/metadata.Repo'
-        step:
-          $ref: '#/components/schemas/metadata.Step'
-        sys:
-          $ref: '#/components/schemas/metadata.System'
-        workflow:
-          $ref: '#/components/schemas/metadata.Workflow'
-    metadata.Author:
-      type: object
-      properties:
-        email:
-          type: string
-        name:
-          type: string
-    StatusValue:
-      type: string
-      enum:
-      - skipped
-      - pending
-      - running
-      - success
-      - failure
-      - killed
-      - canceled
-      - error
-      - blocked
-      - declined
-      - created
-      x-enum-comments:
-        StatusBlocked: waiting for approval
-        StatusCanceled: canceled but hasn't been started
-        StatusCreated: created / internal use only
-        StatusDeclined: blocked and declined
-        StatusError: error with the config / while parsing / some other system problem
-        StatusFailure: failed to finish (exit code != 0)
-        StatusKilled: killed by user
-        StatusPending: pending to be executed
-        StatusRunning: currently running
-        StatusSkipped: skipped as per condition of current workflow failed/success state
-        StatusSuccess: successfully finished
-      x-enum-descriptions:
-      - skipped as per condition of current workflow failed/success state
-      - pending to be executed
-      - currently running
-      - successfully finished
-      - failed to finish (exit code != 0)
-      - killed by user
-      - canceled but hasn't been started
-      - error with the config / while parsing / some other system problem
-      - waiting for approval
-      - blocked and declined
-      - created / internal use only
-      x-enum-varnames:
-      - StatusSkipped
-      - StatusPending
-      - StatusRunning
-      - StatusSuccess
-      - StatusFailure
-      - StatusKilled
-      - StatusCanceled
-      - StatusError
-      - StatusBlocked
-      - StatusDeclined
-      - StatusCreated
-    metadata.Event:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
