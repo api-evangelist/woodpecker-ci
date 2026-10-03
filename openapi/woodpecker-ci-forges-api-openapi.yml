@@ -165,24 +165,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    model.ForgeType:
-      type: string
-      enum:
-      - github
-      - gitlab
-      - gitea
-      - forgejo
-      - bitbucket
-      - bitbucket-dc
-      - addon
-      x-enum-varnames:
-      - ForgeTypeGithub
-      - ForgeTypeGitlab
-      - ForgeTypeGitea
-      - ForgeTypeForgejo
-      - ForgeTypeBitbucket
-      - ForgeTypeBitbucketDatacenter
-      - ForgeTypeAddon
     Forge:
       type: object
       properties:
@@ -207,6 +189,24 @@ components:
           $ref: '#/components/schemas/model.ForgeType'
         url:
           type: string
+    model.ForgeType:
+      type: string
+      enum:
+      - github
+      - gitlab
+      - gitea
+      - forgejo
+      - bitbucket
+      - bitbucket-dc
+      - addon
+      x-enum-varnames:
+      - ForgeTypeGithub
+      - ForgeTypeGitlab
+      - ForgeTypeGitea
+      - ForgeTypeForgejo
+      - ForgeTypeBitbucket
+      - ForgeTypeBitbucketDatacenter
+      - ForgeTypeAddon
     ForgeWithOAuthClientSecret:
       type: object
       properties:

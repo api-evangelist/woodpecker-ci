@@ -193,6 +193,20 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    LogEntryType:
+      type: integer
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      x-enum-varnames:
+      - LogEntryStdout
+      - LogEntryStderr
+      - LogEntryExitCode
+      - LogEntryMetadata
+      - LogEntryProgress
     LogEntry:
       type: object
       properties:
@@ -210,17 +224,3 @@ components:
           type: integer
         type:
           $ref: '#/components/schemas/LogEntryType'
-    LogEntryType:
-      type: integer
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      x-enum-varnames:
-      - LogEntryStdout
-      - LogEntryStderr
-      - LogEntryExitCode
-      - LogEntryMetadata
-      - LogEntryProgress

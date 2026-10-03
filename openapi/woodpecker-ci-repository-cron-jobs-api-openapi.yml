@@ -229,138 +229,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    StatusValue:
-      type: string
-      enum:
-      - skipped
-      - pending
-      - running
-      - success
-      - failure
-      - killed
-      - canceled
-      - error
-      - blocked
-      - declined
-      - created
-      x-enum-comments:
-        StatusBlocked: waiting for approval
-        StatusCanceled: canceled but hasn't been started
-        StatusCreated: created / internal use only
-        StatusDeclined: blocked and declined
-        StatusError: error with the config / while parsing / some other system problem
-        StatusFailure: failed to finish (exit code != 0)
-        StatusKilled: killed by user
-        StatusPending: pending to be executed
-        StatusRunning: currently running
-        StatusSkipped: skipped as per condition of current workflow failed/success state
-        StatusSuccess: successfully finished
-      x-enum-descriptions:
-      - skipped as per condition of current workflow failed/success state
-      - pending to be executed
-      - currently running
-      - successfully finished
-      - failed to finish (exit code != 0)
-      - killed by user
-      - canceled but hasn't been started
-      - error with the config / while parsing / some other system problem
-      - waiting for approval
-      - blocked and declined
-      - created / internal use only
-      x-enum-varnames:
-      - StatusSkipped
-      - StatusPending
-      - StatusRunning
-      - StatusSuccess
-      - StatusFailure
-      - StatusKilled
-      - StatusCanceled
-      - StatusError
-      - StatusBlocked
-      - StatusDeclined
-      - StatusCreated
-    Step:
-      type: object
-      properties:
-        error:
-          type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    CronPatch:
-      type: object
-      properties:
-        branch:
-          type: string
-        enabled:
-          type: boolean
-        name:
-          type: string
-        schedule:
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
-          type: integer
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Step'
-        environ:
-          type: object
-          additionalProperties:
-            type: string
-        error:
-          type: string
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        platform:
-          type: string
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
     StepType:
       type: string
       enum:
@@ -375,41 +243,23 @@ components:
       - StepTypePlugin
       - StepTypeCommands
       - StepTypeCache
-    errors.PipelineErrorType:
-      type: string
-      enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
-      x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    CancelInfo:
+    Release:
       type: object
       properties:
-        canceled_by_step:
+        is_prerelease:
+          type: boolean
+        title:
           type: string
-        canceled_by_user:
+    errors.PipelineError:
+      type: object
+      properties:
+        data: {}
+        is_warning:
+          type: boolean
+        message:
           type: string
-        superseded_by:
-          type: integer
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
     Pipeline:
       type: object
       properties:
@@ -517,38 +367,149 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
-    errors.PipelineError:
+    Step:
       type: object
       properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
+        error:
           type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
         type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    CancelInfo:
+      type: object
+      properties:
+        canceled_by_step:
+          type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+    StatusValue:
+      type: string
+      enum:
+      - skipped
+      - pending
+      - running
+      - success
+      - failure
+      - killed
+      - canceled
+      - error
+      - blocked
+      - declined
+      - created
+      x-enum-comments:
+        StatusBlocked: waiting for approval
+        StatusCanceled: canceled but hasn't been started
+        StatusCreated: created / internal use only
+        StatusDeclined: blocked and declined
+        StatusError: error with the config / while parsing / some other system problem
+        StatusFailure: failed to finish (exit code != 0)
+        StatusKilled: killed by user
+        StatusPending: pending to be executed
+        StatusRunning: currently running
+        StatusSkipped: skipped as per condition of current workflow failed/success state
+        StatusSuccess: successfully finished
+      x-enum-descriptions:
+      - skipped as per condition of current workflow failed/success state
+      - pending to be executed
+      - currently running
+      - successfully finished
+      - failed to finish (exit code != 0)
+      - killed by user
+      - canceled but hasn't been started
+      - error with the config / while parsing / some other system problem
+      - waiting for approval
+      - blocked and declined
+      - created / internal use only
+      x-enum-varnames:
+      - StatusSkipped
+      - StatusPending
+      - StatusRunning
+      - StatusSuccess
+      - StatusFailure
+      - StatusKilled
+      - StatusCanceled
+      - StatusError
+      - StatusBlocked
+      - StatusDeclined
+      - StatusCreated
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
     Cron:
       type: object
       properties:
@@ -571,6 +532,45 @@ components:
           type: integer
         schedule:
           description: "@weekly,\t3min, ..."
+          type: string
+        timezone:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    CronPatch:
+      type: object
+      properties:
+        branch:
+          type: string
+        enabled:
+          type: boolean
+        name:
+          type: string
+        schedule:
           type: string
         timezone:
           type: string

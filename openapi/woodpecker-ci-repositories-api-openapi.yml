@@ -417,37 +417,23 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    model.TrustedConfiguration:
+    PullRequest:
       type: object
       properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    model.ApprovalMode:
+        index:
+          type: string
+        title:
+          type: string
+    RepoVisibility:
       type: string
       enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
+      - public
+      - private
+      - internal
       x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
+      - VisibilityPublic
+      - VisibilityPrivate
+      - VisibilityInternal
     Repo:
       type: object
       properties:
@@ -528,6 +514,15 @@ components:
           $ref: '#/components/schemas/model.TrustedConfiguration'
         visibility:
           $ref: '#/components/schemas/RepoVisibility'
+    model.TrustedConfigurationPatch:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
     RepoPatch:
       type: object
       properties:
@@ -571,6 +566,37 @@ components:
           $ref: '#/components/schemas/model.TrustedConfigurationPatch'
         visibility:
           type: string
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
     Perm:
       type: object
       properties:
@@ -586,25 +612,6 @@ components:
           type: integer
         updated:
           type: integer
-    model.TrustedConfigurationPatch:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    RepoVisibility:
-      type: string
-      enum:
-      - public
-      - private
-      - internal
-      x-enum-varnames:
-      - VisibilityPublic
-      - VisibilityPrivate
-      - VisibilityInternal
     WebhookEvent:
       type: string
       enum:
@@ -627,10 +634,3 @@ components:
       - EventDeploy
       - EventCron
       - EventManual
-    PullRequest:
-      type: object
-      properties:
-        index:
-          type: string
-        title:
-          type: string
