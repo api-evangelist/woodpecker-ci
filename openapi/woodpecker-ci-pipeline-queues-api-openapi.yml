@@ -118,61 +118,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
-    Feed:
-      type: object
-      properties:
-        author:
-          type: string
-        author_avatar:
-          type: string
-        author_email:
-          type: string
-        branch:
-          type: string
-        commit:
-          type: string
-        created:
-          type: integer
-        event:
-          $ref: '#/components/schemas/WebhookEvent'
-        finished:
-          type: integer
-        full_name:
-          type: string
-        id:
-          type: integer
-        message:
-          description: // Deprecated
-          type: string
-        number:
-          type: integer
-        ref:
-          type: string
-        refspec:
-          type: string
-        release:
-          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
-
-            // New'
-          allOf:
-          - $ref: '#/components/schemas/Release'
-        repo_id:
-          type: integer
-        started:
-          type: integer
-        status:
-          type: string
-        tag_title:
-          type: string
-        title:
-          type: string
     WebhookEvent:
       type: string
       enum:
@@ -195,6 +140,41 @@ components:
       - EventDeploy
       - EventCron
       - EventManual
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    QueueInfo:
+      type: object
+      properties:
+        paused:
+          type: boolean
+        pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        running:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
+        stats:
+          type: object
+          properties:
+            pending_count:
+              type: integer
+            running_count:
+              type: integer
+            waiting_on_deps_count:
+              type: integer
+            worker_count:
+              type: integer
+        waiting_on_deps:
+          type: array
+          items:
+            $ref: '#/components/schemas/model.QueueTask'
     StatusValue:
       type: string
       enum:
@@ -295,31 +275,51 @@ components:
           type: array
           items:
             type: string
-    QueueInfo:
+    Feed:
       type: object
       properties:
-        paused:
-          type: boolean
-        pending:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
-        running:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
-        stats:
-          type: object
-          properties:
-            pending_count:
-              type: integer
-            running_count:
-              type: integer
-            waiting_on_deps_count:
-              type: integer
-            worker_count:
-              type: integer
-        waiting_on_deps:
-          type: array
-          items:
-            $ref: '#/components/schemas/model.QueueTask'
+        author:
+          type: string
+        author_avatar:
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        finished:
+          type: integer
+        full_name:
+          type: string
+        id:
+          type: integer
+        message:
+          description: // Deprecated
+          type: string
+        number:
+          type: integer
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        repo_id:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        tag_title:
+          type: string
+        title:
+          type: string

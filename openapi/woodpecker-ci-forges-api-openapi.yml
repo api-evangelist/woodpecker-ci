@@ -165,7 +165,7 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Forge:
+    ForgeWithOAuthClientSecret:
       type: object
       properties:
         additional_options:
@@ -175,6 +175,8 @@ components:
           type: string
         id:
           type: integer
+        oauth_client_secret:
+          type: string
         oauth_host:
           description: public url for oauth if different from url
           type: string
@@ -207,7 +209,7 @@ components:
       - ForgeTypeBitbucket
       - ForgeTypeBitbucketDatacenter
       - ForgeTypeAddon
-    ForgeWithOAuthClientSecret:
+    Forge:
       type: object
       properties:
         additional_options:
@@ -217,8 +219,6 @@ components:
           type: string
         id:
           type: integer
-        oauth_client_secret:
-          type: string
         oauth_host:
           description: public url for oauth if different from url
           type: string

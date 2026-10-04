@@ -229,27 +229,101 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
-    Release:
+    CancelInfo:
       type: object
       properties:
-        is_prerelease:
-          type: boolean
-        title:
+        canceled_by_step:
           type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
+    Cron:
+      type: object
+      properties:
+        branch:
+          type: string
+        created:
+          type: integer
+        creator_id:
+          description: 'TODO: drop with next major version'
+          type: integer
+        enabled:
+          type: boolean
+        id:
+          type: integer
+        name:
+          type: string
+        next_exec:
+          type: integer
+        repo_id:
+          type: integer
+        schedule:
+          description: "@weekly,\t3min, ..."
+          type: string
+        timezone:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        platform:
+          type: string
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
     errors.PipelineError:
       type: object
       properties:
@@ -260,6 +334,55 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/errors.PipelineErrorType'
+    Step:
+      type: object
+      properties:
+        error:
+          type: string
+        exit_code:
+          type: integer
+        finished:
+          type: integer
+        id:
+          type: integer
+        name:
+          type: string
+        pid:
+          type: integer
+        pipeline_id:
+          type: integer
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
     Pipeline:
       type: object
       properties:
@@ -367,73 +490,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    Step:
+    CronPatch:
       type: object
       properties:
-        error:
+        branch:
           type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
+        enabled:
+          type: boolean
         name:
           type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
+        schedule:
           type: string
-    CancelInfo:
-      type: object
-      properties:
-        canceled_by_step:
+        timezone:
           type: string
-        canceled_by_user:
-          type: string
-        superseded_by:
-          type: integer
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
-          type: integer
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Step'
-        environ:
+        variables:
           type: object
           additionalProperties:
             type: string
-        error:
-          type: string
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        platform:
-          type: string
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
     StatusValue:
       type: string
       enum:
@@ -484,97 +557,24 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    errors.PipelineErrorType:
-      type: string
-      enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
-      x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    Cron:
+    Release:
       type: object
       properties:
-        branch:
-          type: string
-        created:
-          type: integer
-        creator_id:
-          description: 'TODO: drop with next major version'
-          type: integer
-        enabled:
+        is_prerelease:
           type: boolean
-        id:
-          type: integer
-        name:
+        title:
           type: string
-        next_exec:
-          type: integer
-        repo_id:
-          type: integer
-        schedule:
-          description: "@weekly,\t3min, ..."
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
-    WebhookEvent:
+    StepType:
       type: string
       enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
       x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
-    CronPatch:
-      type: object
-      properties:
-        branch:
-          type: string
-        enabled:
-          type: boolean
-        name:
-          type: string
-        schedule:
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache

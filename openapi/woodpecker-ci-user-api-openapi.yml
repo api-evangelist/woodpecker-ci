@@ -135,61 +135,81 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Release:
+    CancelInfo:
       type: object
       properties:
-        is_prerelease:
-          type: boolean
-        title:
+        canceled_by_step:
           type: string
-    Feed:
-      type: object
-      properties:
-        author:
+        canceled_by_user:
           type: string
-        author_avatar:
-          type: string
-        author_email:
-          type: string
-        branch:
-          type: string
-        commit:
-          type: string
-        created:
+        superseded_by:
           type: integer
-        event:
-          $ref: '#/components/schemas/WebhookEvent'
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    model.Workflow:
+      type: object
+      properties:
+        agent_id:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+        environ:
+          type: object
+          additionalProperties:
+            type: string
+        error:
+          type: string
         finished:
           type: integer
-        full_name:
-          type: string
         id:
           type: integer
-        message:
-          description: // Deprecated
+        name:
           type: string
-        number:
+        pid:
           type: integer
-        ref:
-          type: string
-        refspec:
-          type: string
-        release:
-          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
-
-            // New'
-          allOf:
-          - $ref: '#/components/schemas/Release'
-        repo_id:
+        pipeline_id:
           type: integer
+        platform:
+          type: string
         started:
           type: integer
-        status:
-          type: string
-        tag_title:
-          type: string
-        title:
-          type: string
+        state:
+          $ref: '#/components/schemas/StatusValue'
     errors.PipelineError:
       type: object
       properties:
@@ -200,102 +220,65 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/errors.PipelineErrorType'
-    StepType:
-      type: string
-      enum:
-      - clone
-      - service
-      - plugin
-      - commands
-      - cache
-      x-enum-varnames:
-      - StepTypeClone
-      - StepTypeService
-      - StepTypePlugin
-      - StepTypeCommands
-      - StepTypeCache
-    RepoLastPipeline:
+    Step:
       type: object
       properties:
-        active:
-          type: boolean
-        allow_deploy:
-          type: boolean
-        allow_pr:
-          type: boolean
-        approval_allowed_users:
-          type: array
-          items:
-            type: string
-        avatar_url:
+        error:
           type: string
-        cancel_previous_pipeline_events:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookEvent'
-        clone_url:
-          type: string
-        clone_url_ssh:
-          type: string
-        config_extension_endpoint:
-          type: string
-        config_extension_exclusive:
-          type: boolean
-        config_extension_netrc:
-          type: boolean
-        config_file:
-          type: string
-        default_branch:
-          type: string
-        forge_id:
+        exit_code:
           type: integer
-        forge_remote_id:
-          description: ForgeRemoteID is the unique identifier for the repository on the forge.
-          type: string
-        forge_url:
-          type: string
-        full_name:
-          type: string
-        has_forge_name_conflict:
-          description: HasForgeNameConflict is true if forge returned a repo with same name but different forge remote id
-          type: boolean
-        has_no_forge_repo:
-          description: HasNoForgeRepo is true if repo only exist in the woodpecker store and not at the forge anymore
-          type: boolean
+        finished:
+          type: integer
         id:
           type: integer
-        last_pipeline:
-          $ref: '#/components/schemas/Pipeline'
         name:
           type: string
-        netrc_trusted:
-          type: array
-          items:
-            type: string
-        org_id:
+        pid:
           type: integer
-        owner:
-          type: string
-        pr_enabled:
-          type: boolean
-        private:
-          type: boolean
-        registry_extension_endpoint:
-          type: string
-        registry_extension_netrc:
-          type: boolean
-        require_approval:
-          $ref: '#/components/schemas/model.ApprovalMode'
-        secret_extension_endpoint:
-          type: string
-        secret_extension_netrc:
-          type: boolean
-        timeout:
+        pipeline_id:
           type: integer
-        trusted:
-          $ref: '#/components/schemas/model.TrustedConfiguration'
-        visibility:
-          $ref: '#/components/schemas/RepoVisibility'
+        ppid:
+          type: integer
+        started:
+          type: integer
+        state:
+          $ref: '#/components/schemas/StatusValue'
+        type:
+          $ref: '#/components/schemas/StepType'
+        uuid:
+          type: string
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
+    RepoVisibility:
+      type: string
+      enum:
+      - public
+      - private
+      - internal
+      x-enum-varnames:
+      - VisibilityPublic
+      - VisibilityPrivate
+      - VisibilityInternal
     Pipeline:
       type: object
       properties:
@@ -403,114 +386,88 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    RepoVisibility:
-      type: string
-      enum:
-      - public
-      - private
-      - internal
-      x-enum-varnames:
-      - VisibilityPublic
-      - VisibilityPrivate
-      - VisibilityInternal
-    Step:
+    RepoLastPipeline:
       type: object
       properties:
-        error:
-          type: string
-        exit_code:
-          type: integer
-        finished:
-          type: integer
-        id:
-          type: integer
-        name:
-          type: string
-        pid:
-          type: integer
-        pipeline_id:
-          type: integer
-        ppid:
-          type: integer
-        started:
-          type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
-        type:
-          $ref: '#/components/schemas/StepType'
-        uuid:
-          type: string
-    model.ApprovalMode:
-      type: string
-      enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
-      x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
-    model.TrustedConfiguration:
-      type: object
-      properties:
-        network:
+        active:
           type: boolean
-        security:
+        allow_deploy:
           type: boolean
-        volumes:
+        allow_pr:
           type: boolean
-    CancelInfo:
-      type: object
-      properties:
-        canceled_by_step:
-          type: string
-        canceled_by_user:
-          type: string
-        superseded_by:
-          type: integer
-    model.Workflow:
-      type: object
-      properties:
-        agent_id:
-          type: integer
-        children:
+        approval_allowed_users:
           type: array
           items:
-            $ref: '#/components/schemas/Step'
-        environ:
-          type: object
-          additionalProperties:
             type: string
-        error:
+        avatar_url:
           type: string
-        finished:
+        cancel_previous_pipeline_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        clone_url:
+          type: string
+        clone_url_ssh:
+          type: string
+        config_extension_endpoint:
+          type: string
+        config_extension_exclusive:
+          type: boolean
+        config_extension_netrc:
+          type: boolean
+        config_file:
+          type: string
+        default_branch:
+          type: string
+        forge_id:
           type: integer
+        forge_remote_id:
+          description: ForgeRemoteID is the unique identifier for the repository on the forge.
+          type: string
+        forge_url:
+          type: string
+        full_name:
+          type: string
+        has_forge_name_conflict:
+          description: HasForgeNameConflict is true if forge returned a repo with same name but different forge remote id
+          type: boolean
+        has_no_forge_repo:
+          description: HasNoForgeRepo is true if repo only exist in the woodpecker store and not at the forge anymore
+          type: boolean
         id:
           type: integer
+        last_pipeline:
+          $ref: '#/components/schemas/Pipeline'
         name:
           type: string
-        pid:
+        netrc_trusted:
+          type: array
+          items:
+            type: string
+        org_id:
           type: integer
-        pipeline_id:
-          type: integer
-        platform:
+        owner:
           type: string
-        started:
+        pr_enabled:
+          type: boolean
+        private:
+          type: boolean
+        registry_extension_endpoint:
+          type: string
+        registry_extension_netrc:
+          type: boolean
+        require_approval:
+          $ref: '#/components/schemas/model.ApprovalMode'
+        secret_extension_endpoint:
+          type: string
+        secret_extension_netrc:
+          type: boolean
+        timeout:
           type: integer
-        state:
-          $ref: '#/components/schemas/StatusValue'
+        trusted:
+          $ref: '#/components/schemas/model.TrustedConfiguration'
+        visibility:
+          $ref: '#/components/schemas/RepoVisibility'
     StatusValue:
       type: string
       enum:
@@ -561,54 +518,49 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    errors.PipelineErrorType:
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    model.ApprovalMode:
       type: string
       enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
+      - none
+      - forks
+      - pull_requests
+      - all_events
       x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
       x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
       x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    WebhookEvent:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
+    StepType:
       type: string
       enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
+      - clone
+      - service
+      - plugin
+      - commands
+      - cache
       x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
+      - StepTypeClone
+      - StepTypeService
+      - StepTypePlugin
+      - StepTypeCommands
+      - StepTypeCache
     User:
       type: object
       properties:
@@ -650,3 +602,51 @@ components:
         org_id:
           description: OrgID is the of the user as model.Org.
           type: integer
+    Feed:
+      type: object
+      properties:
+        author:
+          type: string
+        author_avatar:
+          type: string
+        author_email:
+          type: string
+        branch:
+          type: string
+        commit:
+          type: string
+        created:
+          type: integer
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        finished:
+          type: integer
+        full_name:
+          type: string
+        id:
+          type: integer
+        message:
+          description: // Deprecated
+          type: string
+        number:
+          type: integer
+        ref:
+          type: string
+        refspec:
+          type: string
+        release:
+          description: 'Ongoing Work: https://github.com/woodpecker-ci/woodpecker/pull/4626
+
+            // New'
+          allOf:
+          - $ref: '#/components/schemas/Release'
+        repo_id:
+          type: integer
+        started:
+          type: integer
+        status:
+          type: string
+        tag_title:
+          type: string
+        title:
+          type: string

@@ -417,6 +417,46 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    model.TrustedConfiguration:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    model.TrustedConfigurationPatch:
+      type: object
+      properties:
+        network:
+          type: boolean
+        security:
+          type: boolean
+        volumes:
+          type: boolean
+    WebhookEvent:
+      type: string
+      enum:
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
+      x-enum-varnames:
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
     PullRequest:
       type: object
       properties:
@@ -434,6 +474,86 @@ components:
       - VisibilityPublic
       - VisibilityPrivate
       - VisibilityInternal
+    RepoPatch:
+      type: object
+      properties:
+        allow_deploy:
+          type: boolean
+        allow_pr:
+          type: boolean
+        approval_allowed_users:
+          type: array
+          items:
+            type: string
+        cancel_previous_pipeline_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEvent'
+        config_extension_endpoint:
+          type: string
+        config_extension_exclusive:
+          type: boolean
+        config_extension_netrc:
+          type: boolean
+        config_file:
+          type: string
+        netrc_trusted:
+          type: array
+          items:
+            type: string
+        registry_extension_endpoint:
+          type: string
+        registry_extension_netrc:
+          type: boolean
+        require_approval:
+          type: string
+        secret_extension_endpoint:
+          type: string
+        secret_extension_netrc:
+          type: boolean
+        timeout:
+          type: integer
+        trusted:
+          $ref: '#/components/schemas/model.TrustedConfigurationPatch'
+        visibility:
+          type: string
+    Perm:
+      type: object
+      properties:
+        admin:
+          type: boolean
+        created:
+          type: integer
+        pull:
+          type: boolean
+        push:
+          type: boolean
+        synced:
+          type: integer
+        updated:
+          type: integer
+    model.ApprovalMode:
+      type: string
+      enum:
+      - none
+      - forks
+      - pull_requests
+      - all_events
+      x-enum-comments:
+        RequireApprovalAllEvents: require approval for all external events
+        RequireApprovalForks: require approval for PRs from forks (default)
+        RequireApprovalNone: require approval for no events
+        RequireApprovalPullRequests: require approval for all PRs
+      x-enum-descriptions:
+      - require approval for no events
+      - require approval for PRs from forks (default)
+      - require approval for all PRs
+      - require approval for all external events
+      x-enum-varnames:
+      - RequireApprovalNone
+      - RequireApprovalForks
+      - RequireApprovalPullRequests
+      - RequireApprovalAllEvents
     Repo:
       type: object
       properties:
@@ -514,123 +634,3 @@ components:
           $ref: '#/components/schemas/model.TrustedConfiguration'
         visibility:
           $ref: '#/components/schemas/RepoVisibility'
-    model.TrustedConfigurationPatch:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    RepoPatch:
-      type: object
-      properties:
-        allow_deploy:
-          type: boolean
-        allow_pr:
-          type: boolean
-        approval_allowed_users:
-          type: array
-          items:
-            type: string
-        cancel_previous_pipeline_events:
-          type: array
-          items:
-            $ref: '#/components/schemas/WebhookEvent'
-        config_extension_endpoint:
-          type: string
-        config_extension_exclusive:
-          type: boolean
-        config_extension_netrc:
-          type: boolean
-        config_file:
-          type: string
-        netrc_trusted:
-          type: array
-          items:
-            type: string
-        registry_extension_endpoint:
-          type: string
-        registry_extension_netrc:
-          type: boolean
-        require_approval:
-          type: string
-        secret_extension_endpoint:
-          type: string
-        secret_extension_netrc:
-          type: boolean
-        timeout:
-          type: integer
-        trusted:
-          $ref: '#/components/schemas/model.TrustedConfigurationPatch'
-        visibility:
-          type: string
-    model.TrustedConfiguration:
-      type: object
-      properties:
-        network:
-          type: boolean
-        security:
-          type: boolean
-        volumes:
-          type: boolean
-    model.ApprovalMode:
-      type: string
-      enum:
-      - none
-      - forks
-      - pull_requests
-      - all_events
-      x-enum-comments:
-        RequireApprovalAllEvents: require approval for all external events
-        RequireApprovalForks: require approval for PRs from forks (default)
-        RequireApprovalNone: require approval for no events
-        RequireApprovalPullRequests: require approval for all PRs
-      x-enum-descriptions:
-      - require approval for no events
-      - require approval for PRs from forks (default)
-      - require approval for all PRs
-      - require approval for all external events
-      x-enum-varnames:
-      - RequireApprovalNone
-      - RequireApprovalForks
-      - RequireApprovalPullRequests
-      - RequireApprovalAllEvents
-    Perm:
-      type: object
-      properties:
-        admin:
-          type: boolean
-        created:
-          type: integer
-        pull:
-          type: boolean
-        push:
-          type: boolean
-        synced:
-          type: integer
-        updated:
-          type: integer
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
