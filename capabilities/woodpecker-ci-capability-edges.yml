@@ -1,0 +1,91 @@
+slug: woodpecker-ci
+provider: Woodpecker CI
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 8
+edges:
+- tag: Pipelines
+  spec_file: woodpecker-ci-pipelines-api-openapi.yml
+  capability_id: BC-4210.10
+  capability_id_l1: BC-4210
+  capability_name: Continuous Integration Management
+  confidence: 0.88
+  evidence: POST /repos/{repo_id}/pipelines "Trigger a manual pipeline"; "Restart a pipeline"; "Approve
+    and start a pipeline"
+  reason: Operations create, trigger, restart, approve and cancel CI build pipelines for a repository
+    — the core continuous integration build-pipeline surface of this CI/CD engine.
+- tag: Repository secrets
+  spec_file: woodpecker-ci-repository-secrets-api-openapi.yml
+  capability_id: BC-4210.60
+  capability_id_l1: BC-4210
+  capability_name: Configuration & Secrets Management
+  confidence: 0.85
+  evidence: POST /repos/{repo_id}/secrets "Create a repository secret"; schemas Secret, SecretPatch
+  reason: CRUD over pipeline secrets scoped to a repository — explicitly configuration and secrets management
+    for the build/deploy platform.
+- tag: Secrets
+  spec_file: woodpecker-ci-secrets-api-openapi.yml
+  capability_id: BC-4210.60
+  capability_id_l1: BC-4210
+  capability_name: Configuration & Secrets Management
+  confidence: 0.85
+  evidence: POST /secrets "Create a global secret"; schemas Secret, SecretPatch
+  reason: CRUD over server-wide pipeline secrets injected into CI/CD runs — configuration and secrets
+    management.
+- tag: Organization Secrets
+  spec_file: woodpecker-ci-organization-secrets-api-openapi.yml
+  capability_id: BC-4210.60
+  capability_id_l1: BC-4210
+  capability_name: Configuration & Secrets Management
+  confidence: 0.8
+  evidence: 'POST /orgs/{org_id}/secrets Create an organization secret; schemas: Secret, SecretPatch'
+  reason: CRUD over secrets consumed by CI pipelines maps directly to Configuration & Secrets Management
+    within software release/deployment.
+- tag: Pipeline queues
+  spec_file: woodpecker-ci-pipeline-queues-api-openapi.yml
+  capability_id: BC-4210.10
+  capability_id_l1: BC-4210
+  capability_name: Continuous Integration Management
+  confidence: 0.8
+  evidence: GET /pipelines List pipelines in queue; POST /queue/pause Pause the pipeline queue; schema
+    model.QueueTask
+  reason: Control of the CI build queue — directly operating the build pipeline execution of a CI/CD engine.
+- tag: Repository cron jobs
+  spec_file: woodpecker-ci-repository-cron-jobs-api-openapi.yml
+  capability_id: BC-4210.10
+  capability_id_l1: BC-4210
+  capability_name: Continuous Integration Management
+  confidence: 0.72
+  evidence: POST /repos/{repo_id}/cron "Create a cron job"; "Start a cron job now"; schemas Cron, Pipeline,
+    model.Workflow
+  reason: Scheduled triggers that launch CI pipelines for a repository — build pipeline scheduling within
+    continuous integration management.
+- tag: Agents
+  spec_file: woodpecker-ci-agents-api-openapi.yml
+  capability_id: BC-4210.10
+  capability_id_l1: BC-4210
+  capability_name: Continuous Integration Management
+  confidence: 0.7
+  evidence: 'List agents / Create a new agent; GET /agents/{agent_id}/tasks List agent tasks; schemas:
+    Task, Agent'
+  reason: Agents are the build workers executing CI pipeline tasks in a CI/CD engine; managing them is
+    continuous integration infrastructure. Some ambiguity vs generic IT infrastructure, but the vendor
+    is explicitly a CI/CD engine.
+- tag: Pipeline logs
+  spec_file: woodpecker-ci-pipeline-logs-api-openapi.yml
+  capability_id: BC-4210.10
+  capability_id_l1: BC-4210
+  capability_name: Continuous Integration Management
+  confidence: 0.7
+  evidence: 'Get logs for a pipeline step; Stream logs of a pipeline step; schemas: LogEntry'
+  reason: Build-step log retrieval from CI pipelines — part of continuous integration pipeline operation,
+    not production service observability.

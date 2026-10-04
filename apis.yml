@@ -445,6 +445,9 @@ apis:
   - type: Console
     url: https://ci.woodpecker-ci.org/swagger/index.html
 common:
+- type: CapabilityMap
+  url: capabilities/woodpecker-ci-capability-edges.yml
+  name: Woodpecker CI Business Capability Map
 - type: Overlay
   url: overlays/woodpecker-ci-server-swagger-overlay.yaml
 - type: Website
