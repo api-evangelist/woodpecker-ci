@@ -229,70 +229,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CancelInfo:
-      type: object
-      properties:
-        canceled_by_step:
-          type: string
-        canceled_by_user:
-          type: string
-        superseded_by:
-          type: integer
-    errors.PipelineErrorType:
+    WebhookEvent:
       type: string
       enum:
-      - linter
-      - deprecation
-      - compiler
-      - generic
-      - bad_habit
-      x-enum-comments:
-        PipelineErrorTypeBadHabit: some bad-habit error
-        PipelineErrorTypeCompiler: some error with the config semantics
-        PipelineErrorTypeDeprecation: using some deprecated feature
-        PipelineErrorTypeGeneric: some generic error
-        PipelineErrorTypeLinter: some error with the config syntax
-      x-enum-descriptions:
-      - some error with the config syntax
-      - using some deprecated feature
-      - some error with the config semantics
-      - some generic error
-      - some bad-habit error
+      - push
+      - pull_request
+      - pull_request_closed
+      - pull_request_metadata
+      - tag
+      - release
+      - deployment
+      - cron
+      - manual
       x-enum-varnames:
-      - PipelineErrorTypeLinter
-      - PipelineErrorTypeDeprecation
-      - PipelineErrorTypeCompiler
-      - PipelineErrorTypeGeneric
-      - PipelineErrorTypeBadHabit
-    Cron:
-      type: object
-      properties:
-        branch:
-          type: string
-        created:
-          type: integer
-        creator_id:
-          description: 'TODO: drop with next major version'
-          type: integer
-        enabled:
-          type: boolean
-        id:
-          type: integer
-        name:
-          type: string
-        next_exec:
-          type: integer
-        repo_id:
-          type: integer
-        schedule:
-          description: "@weekly,\t3min, ..."
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
+      - EventPush
+      - EventPull
+      - EventPullClosed
+      - EventPullMetadata
+      - EventTag
+      - EventRelease
+      - EventDeploy
+      - EventCron
+      - EventManual
     model.Workflow:
       type: object
       properties:
@@ -324,16 +282,94 @@ components:
           type: integer
         state:
           $ref: '#/components/schemas/StatusValue'
-    errors.PipelineError:
+    Cron:
       type: object
       properties:
-        data: {}
-        is_warning:
-          type: boolean
-        message:
+        branch:
           type: string
-        type:
-          $ref: '#/components/schemas/errors.PipelineErrorType'
+        created:
+          type: integer
+        creator_id:
+          description: 'TODO: drop with next major version'
+          type: integer
+        enabled:
+          type: boolean
+        id:
+          type: integer
+        name:
+          type: string
+        next_exec:
+          type: integer
+        repo_id:
+          type: integer
+        schedule:
+          description: "@weekly,\t3min, ..."
+          type: string
+        timezone:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    CancelInfo:
+      type: object
+      properties:
+        canceled_by_step:
+          type: string
+        canceled_by_user:
+          type: string
+        superseded_by:
+          type: integer
+    Release:
+      type: object
+      properties:
+        is_prerelease:
+          type: boolean
+        title:
+          type: string
+    CronPatch:
+      type: object
+      properties:
+        branch:
+          type: string
+        enabled:
+          type: boolean
+        name:
+          type: string
+        schedule:
+          type: string
+        timezone:
+          type: string
+        variables:
+          type: object
+          additionalProperties:
+            type: string
+    errors.PipelineErrorType:
+      type: string
+      enum:
+      - linter
+      - deprecation
+      - compiler
+      - generic
+      - bad_habit
+      x-enum-comments:
+        PipelineErrorTypeBadHabit: some bad-habit error
+        PipelineErrorTypeCompiler: some error with the config semantics
+        PipelineErrorTypeDeprecation: using some deprecated feature
+        PipelineErrorTypeGeneric: some generic error
+        PipelineErrorTypeLinter: some error with the config syntax
+      x-enum-descriptions:
+      - some error with the config syntax
+      - using some deprecated feature
+      - some error with the config semantics
+      - some generic error
+      - some bad-habit error
+      x-enum-varnames:
+      - PipelineErrorTypeLinter
+      - PipelineErrorTypeDeprecation
+      - PipelineErrorTypeCompiler
+      - PipelineErrorTypeGeneric
+      - PipelineErrorTypeBadHabit
     Step:
       type: object
       properties:
@@ -361,28 +397,6 @@ components:
           $ref: '#/components/schemas/StepType'
         uuid:
           type: string
-    WebhookEvent:
-      type: string
-      enum:
-      - push
-      - pull_request
-      - pull_request_closed
-      - pull_request_metadata
-      - tag
-      - release
-      - deployment
-      - cron
-      - manual
-      x-enum-varnames:
-      - EventPush
-      - EventPull
-      - EventPullClosed
-      - EventPullMetadata
-      - EventTag
-      - EventRelease
-      - EventDeploy
-      - EventCron
-      - EventManual
     Pipeline:
       type: object
       properties:
@@ -490,23 +504,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/model.Workflow'
-    CronPatch:
+    errors.PipelineError:
       type: object
       properties:
-        branch:
-          type: string
-        enabled:
+        data: {}
+        is_warning:
           type: boolean
-        name:
+        message:
           type: string
-        schedule:
-          type: string
-        timezone:
-          type: string
-        variables:
-          type: object
-          additionalProperties:
-            type: string
+        type:
+          $ref: '#/components/schemas/errors.PipelineErrorType'
     StatusValue:
       type: string
       enum:
@@ -557,13 +564,6 @@ components:
       - StatusBlocked
       - StatusDeclined
       - StatusCreated
-    Release:
-      type: object
-      properties:
-        is_prerelease:
-          type: boolean
-        title:
-          type: string
     StepType:
       type: string
       enum:
