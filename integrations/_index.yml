@@ -37,3 +37,82 @@
     detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
+- slug: woodpecker-ci-go-module-proxy
+  label: Go module proxy
+  partner_name: Go module proxy
+  category: official SDK (Go)
+  type: register
+  channel: package-registry
+  evidence: https://pkg.go.dev/go.woodpecker-ci.org/autoscaler
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: Go module proxy (public registry JSON)
+    spec_file: null
+    language: Go
+    packages:
+    - name: go.woodpecker-ci.org/autoscaler
+      version: v0.0.0-20250125012534-9cf2f79135c9
+      released: '2025-01-25'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/go.woodpecker-ci.org/autoscaler
+      repo_leg: domain:woodpecker-ci.org
+      publisher_leg: module-path:woodpecker-ci.org
+      matched_by: domain
+    - name: go.woodpecker-ci.org/woodpecker/v2
+      version: v2.8.3
+      released: '2025-01-12'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/go.woodpecker-ci.org/woodpecker/v2
+      repo_leg: domain:woodpecker-ci.org
+      publisher_leg: module-path:woodpecker-ci.org
+      matched_by: domain
+    - name: go.woodpecker-ci.org/woodpecker/v3
+      version: v3.19.0
+      released: '2026-10-07'
+      released_field: Time
+      lapsed: false
+      page: https://pkg.go.dev/go.woodpecker-ci.org/woodpecker/v3
+      repo_leg: domain:woodpecker-ci.org
+      publisher_leg: module-path:woodpecker-ci.org
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
+- slug: woodpecker-ci-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/@woodpecker-ci/plugin
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@woodpecker-ci/plugin'
+      version: 1.1.0
+      released: '2026-10-08'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@woodpecker-ci/plugin
+      repo_leg: domain:woodpecker-ci.org
+      publisher_leg: org:woodpecker-ci
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
