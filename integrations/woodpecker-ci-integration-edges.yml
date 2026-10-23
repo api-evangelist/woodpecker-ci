@@ -110,6 +110,36 @@ edges:
     detected: '2026-10-19'
   detected_by: sweep-cloud-native.py
   first_seen: '2026-10-15'
+- partner_name: CD Foundation (Continuous Delivery Foundation landscape)
+  partner: continuous-delivery-foundation
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  category: Continuous delivery foundation membership / landscape
+  evidence: https://landscape.cd.foundation/
+  contract_reference:
+    register: CD Foundation landscape (landscape.cd.foundation/data/full.json)
+    spec_file: null
+    standard: Continuous Delivery Foundation
+    role: cdf-landscape-listed
+    registered_name: Woodpecker CI
+    registered_names:
+    - Woodpecker CI
+    website: https://woodpecker-ci.org
+    matched_domain: woodpecker-ci.org
+    matched_by: domain
+    member_tier: null
+    landscape_categories:
+    - CI & Pipeline Orchestration / Continuous Integration
+    cdf_projects: []
+    signal_note: 'participation only: CDF membership or a landscape listing is standard-participant evidence, never
+      depth; tier, categories and entries are context, never counted'
+    detected_by: sweep-jenkins-cd-foundation-plugins.py
+    detected: '2026-10-22'
+  detected_by: sweep-jenkins-cd-foundation-plugins.py
+  first_seen: '2026-10-22'
 - partner_name: OpenSSF Best Practices Badge (bestpractices.dev)
   partner: null
   partner_match: register
@@ -157,13 +187,13 @@ checked:
 - https://focus.finops.org/data-generators/
 - https://github.com/cncf/k8s-conformance
 - https://github.com/cncf/landscape
-- https://landscape.cd.foundation/data/full.json
-- https://plugins.jenkins.io/api/plugin/
-- https://plugins.jenkins.io/api/plugins
 - https://proxy.golang.org
 - https://pypi.org/pypi
 - https://registry.npmjs.org
 - https://repo1.maven.org/maven2
 - https://rubygems.org/api/v1
 - https://www.bestpractices.dev/en/projects.json
+- https://landscape.cd.foundation/data/full.json
+- https://plugins.jenkins.io/api/plugin/
+- https://plugins.jenkins.io/api/plugins
 - https://www.bestpractices.dev/en/projects.json?page=N
